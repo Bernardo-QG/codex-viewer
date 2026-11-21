@@ -4,80 +4,128 @@
   <img src="https://avatars.githubusercontent.com/u/18334613?s=400&u=e7bdce3bde7c8aaca98e291e31f7fc2911203d8f&v=4" alt="Bernardo Quintino Guzmán" width="200" style="border-radius: 50%;" />
 </p>
 
-Visualizador de documentos Markdown con panel de administración. Los documentos viven en Supabase (base de datos `codex`) y se muestran agrupados por categoría en el menú lateral.
+<p align="center">
+  A Markdown knowledge base with a built-in admin panel, powered by Supabase and served as a static site.<br />
+  <a href="https://bernardo-qg.github.io/codex-viewer/"><strong>Live site</strong></a> ·
+  <a href="docs/adr/README.md">Architecture decisions</a> ·
+  <a href="README.es.md">Leer en español</a>
+</p>
 
-**Sitio:** https://bernardo-qg.github.io/codex-viewer/
+## Features
 
-## Funcionalidades
+**Reader**
 
-- **Visor:** lista de documentos agrupada por categoría y ordenada, navegación sin recargar la página (`?doc=<slug>`) y menú lateral adaptable a móvil.
-- **Panel de administración** (`admin.html`): crea, edita y elimina documentos con editor Markdown, asigna categoría y orden, y abre el documento publicado.
-- **Validaciones:** formato de slug (`minusculas-con-guiones`) y aviso de slug duplicado.
-- **Compatibilidad:** si la tabla `categories` no existe, el sitio funciona con una lista simple.
-- **Favicon:** se toma del avatar de GitHub, así que se actualiza al cambiar la foto de perfil.
+- Documents grouped by category in a sidebar, with manual ordering
+- Instant search by title or category (`/` to focus, `Enter` to open, `Esc` to clear)
+- Table of contents for each document, highlighting the section you are reading
+- One-click copy button on code blocks
+- "Last updated" date for every document
+- Client-side routing with shareable URLs (`?doc=<slug>`), working back and forward buttons and a mobile-friendly layout
 
-## Tecnologías
+**Admin panel** (`admin.html`)
 
-- HTML, CSS y JavaScript (módulos ES), sin paso de compilación
-- [Supabase](https://supabase.com/) (PostgreSQL + API REST) mediante `supabase-js`
-- [zero-md](https://github.com/zerodevx/zero-md) para renderizar Markdown
-- [EasyMDE](https://github.com/Ionaru/easy-markdown-editor) como editor en el panel
-- [Bruno](https://www.usebruno.com/) para probar la API
+- Create, edit and delete documents with a Markdown editor
+- Assign a category and order, then open the published page in one click
+- Slug format validation and friendly duplicate-slug errors
 
-## Estructura
+## Architecture
 
-| Ruta                  | Descripción                                                                                      |
-| --------------------- | ------------------------------------------------------------------------------------------------ |
-| `index.html`          | Visor público                                                                                    |
-| `admin.html`          | Panel de administración                                                                          |
-| `assets/js/config.js` | URL de Supabase y llave publicable                                                               |
-| `assets/js/utils.js`  | Cliente Supabase y utilidades compartidas (consulta, orden, listado, escape de HTML)             |
-| `assets/js/api.js`    | Lógica del visor                                                                                 |
-| `assets/js/admin.js`  | Lógica del panel                                                                                 |
-| `assets/css/`         | Estilos generales (`styles.css`), del panel (`admin.css`) y del Markdown (`markdown-styles.css`) |
-| `assets/images/`      | Imágenes que usan los documentos                                                                 |
-| `assets/bruno/`       | Colección de Bruno para listar y crear o actualizar documentos                                   |
-| `db/schema.sql`       | Tablas `categories` y `documents`, índice y trigger de `updated_at`                              |
-| `db/seed.sql`         | Datos de ejemplo (no ejecutar en producción)                                                     |
-| `docs/adr/`           | Decisiones de arquitectura (ADR)                                                                 |
-| `.gitattributes`      | Normaliza los saltos de línea a LF                                                               |
+```mermaid
+flowchart LR
+    subgraph Browser["Browser · GitHub Pages"]
+        V["index.html<br/>Reader"]
+        A["admin.html<br/>Admin panel"]
+    end
+    subgraph Supabase
+        R["REST API<br/>PostgREST"]
+        DB[("PostgreSQL<br/>documents · categories")]
+    end
+    CDN["jsDelivr CDN<br/>zero-md · EasyMDE · supabase-js"]
 
-## Configuración
-
-1. Ejecuta `db/schema.sql` en el SQL Editor de Supabase para crear el esquema.
-2. Coloca la URL del proyecto y la llave publicable en `assets/js/config.js`.
-3. Sirve la carpeta con cualquier servidor estático, por ejemplo `npx serve .`, o publícala en GitHub Pages.
-
-### Categorías
-
-Las categorías se crean directamente en la base de datos y desde el panel se asignan a cada documento:
-
-```sql
-INSERT INTO categories (name, slug, sort_order) VALUES ('Herramientas', 'herramientas', 1);
+    V -- "read" --> R
+    A -- "create · update · delete" --> R
+    R --> DB
+    CDN -.-> V
+    CDN -.-> A
 ```
 
-El menú se ordena por `sort_order` de la categoría y después por `sort_order` del documento. Los documentos sin categoría aparecen al final.
+There is no backend and no build step: two HTML pages talk directly to Supabase's auto-generated REST API, and GitHub Pages serves the files as they are.
 
-## Desarrollo
+### Key decisions
 
-No hace falta instalar nada. Como el sitio usa módulos ES, se debe servir con un servidor local; abrir el HTML con doble clic no funciona:
+Each decision is recorded as an [Architecture Decision Record](docs/adr/README.md) (in Spanish):
 
-```bash
-python -m http.server 3000   # o "Open with Live Server" en VS Code
+| Decision | Why |
+| --- | --- |
+| [Static site, no build](docs/adr/0002-sitio-estatico-sin-compilacion.md) | Free hosting, zero dependencies, nothing to maintain beyond the code itself |
+| [Client-side Markdown rendering](docs/adr/0003-renderizar-markdown-con-zero-md.md) | A single web component handles rendering, syntax highlighting and style isolation through the Shadow DOM |
+| [Supabase as the content store](docs/adr/0004-supabase-como-almacenamiento.md) | Edit notes from the browser without commits; real SQL with a versioned schema |
+| [Categories as a separate table](docs/adr/0006-categorias-y-orden-de-documentos.md) | Orderable groups, with graceful fallback if the schema hasn't been migrated yet |
+| [Public key + Row Level Security](docs/adr/0007-seguridad-con-llave-publicable-y-rls.md) | On a static site the API key is necessarily public, so authorization lives in the database *(in progress)* |
+
+### Engineering notes
+
+- **XSS-safe rendering:** every database value inserted with `innerHTML` is escaped.
+- **Race-condition guard:** a request counter ensures a slow response can never overwrite a document opened afterwards.
+- **Graceful degradation:** if a newer column or table is missing, the app falls back to a simpler query instead of breaking.
+- **Shadow DOM integration:** the table of contents and copy buttons are built from zero-md's rendered output using its `zero-md-rendered` event.
+
+## Tech stack
+
+HTML · CSS · JavaScript (ES modules) · [Supabase](https://supabase.com/) · [zero-md](https://github.com/zerodevx/zero-md) · [EasyMDE](https://github.com/Ionaru/easy-markdown-editor) · [Bruno](https://www.usebruno.com/) · GitHub Pages
+
+## Project structure
+
+```
+├── index.html            Reader
+├── admin.html            Admin panel
+├── assets/
+│   ├── js/
+│   │   ├── config.js     Supabase URL and publishable key
+│   │   ├── utils.js      Shared client, querying, sorting, list rendering, HTML escaping
+│   │   ├── api.js        Reader logic: search, table of contents, copy buttons
+│   │   └── admin.js      Admin panel logic
+│   ├── css/              Site, admin and Markdown styles
+│   ├── images/           Images referenced by documents
+│   └── bruno/            API collection for Bruno
+├── db/
+│   ├── schema.sql        Tables, index and updated_at trigger
+│   └── seed.sql          Sample data
+└── docs/adr/             Architecture Decision Records
 ```
 
-## Convenciones
+## Getting started
 
-- **Commits:** [Conventional Commits](https://www.conventionalcommits.org/es/) en una sola línea, en español y en minúsculas: `tipo(alcance): descripcion`. Tipos: `feat`, `fix`, `docs`, `style`, `refactor` y `chore`.
-- **Código:** funciones y variables en español con camelCase (`listarDocumentos`), clases CSS en snake_case (`sidebar_list`). El texto que viene de la base pasa por `escapeHtml` antes de insertarse con `innerHTML`.
-- **Formato:** `.editorconfig` (4 espacios, UTF-8) y `.gitattributes` (LF).
-- **Base de datos:** todo cambio de esquema se refleja en `db/schema.sql` en el mismo commit.
-- **Decisiones:** las de arquitectura se registran como [ADR](docs/adr/README.md) y los cambios en el [CHANGELOG](CHANGELOG.md).
+1. Create a Supabase project and run `db/schema.sql` in the SQL Editor.
+2. Put the project URL and publishable key in `assets/js/config.js`.
+3. Serve the folder locally. ES modules don't load from `file://`:
 
-## Seguridad
+   ```bash
+   python -m http.server 3000   # or "Open with Live Server" in VS Code
+   ```
 
-Ver [SECURITY.md](SECURITY.md).
+4. Open http://localhost:3000. Documents are managed from `/admin.html`; categories are created in SQL:
 
-## Licencia
+   ```sql
+   INSERT INTO categories (name, slug, sort_order) VALUES ('Tools', 'tools', 1);
+   ```
+
+## Roadmap
+
+- [ ] Admin authentication with Supabase Auth and Row Level Security ([ADR 0007](docs/adr/0007-seguridad-con-llave-publicable-y-rls.md))
+- [ ] Scheduled backup of all documents to Markdown files
+- [ ] Category management and image uploads from the admin panel
+
+## Conventions
+
+- **Commits:** single-line [Conventional Commits](https://www.conventionalcommits.org/), e.g. `feat(admin): permite asignar categoria`.
+- **Formatting:** `.editorconfig` (4 spaces, UTF-8) and `.gitattributes` (LF line endings).
+- **Schema changes** go into `db/schema.sql` in the same commit; notable changes go into the [CHANGELOG](CHANGELOG.md).
+
+## Security
+
+See [SECURITY.md](SECURITY.md).
+
+## License
 
 [MIT](LICENSE) © 2026 [Bernardo Quintino Guzmán](https://github.com/Bernardo-QG)

@@ -30,6 +30,14 @@
             <aside class="sidebar" id="sidebar">
                 <button class="sidebar_toggle" id="sidebar_toggle" aria-label="Cerrar menu">✕</button>
                 <h2 class="sidebar_title">Documentos</h2>
+                <input
+                    type="search"
+                    class="sidebar_search"
+                    id="search"
+                    placeholder="Buscar…  ( / )"
+                    aria-label="Buscar documentos"
+                    autocomplete="off"
+                />
                 <ul class="sidebar_list" id="document_list"></ul>
             </aside>
 
@@ -40,6 +48,7 @@
                     <p class="main_slug" id="document_slug"></p>
                 </div>
                 <h1 class="main_title" id="document_title"></h1>
+                <p class="main_updated" id="document_updated" hidden></p>
                 <p class="loading" id="loading">Cargando...</p>
                 <zero-md id="content" hidden>
                     <template data-append>
@@ -47,6 +56,12 @@
                     </template>
                 </zero-md>
             </main>
+
+            <!-- Indice del documento -->
+            <nav class="toc" id="toc" aria-label="En este documento" hidden>
+                <h2 class="toc_title">En este documento</h2>
+                <ul class="toc_list" id="toc_list"></ul>
+            </nav>
         </div>
 
         <footer>

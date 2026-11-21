@@ -9,6 +9,11 @@ Todos los cambios relevantes del proyecto. El formato sigue [Keep a Changelog](h
 - ADRs en `docs/adr/` con las decisiones de arquitectura del proyecto.
 - Política de seguridad, licencia MIT y `.editorconfig`.
 - Imagen para vista previa al compartir el enlace (`og:image`).
+- Búsqueda de documentos en el menú lateral, con atajo `/`.
+- Índice de cada documento que resalta la sección visible.
+- Botón para copiar los bloques de código.
+- Fecha de última actualización en cada documento.
+- README en inglés con diagrama de arquitectura y versión en español (`README.es.md`).
 
 ## [1.0.0] - 2026-11-21
 
