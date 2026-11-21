@@ -34,7 +34,7 @@
                     type="search"
                     class="sidebar_search"
                     id="search"
-                    placeholder="Buscar…  ( / )"
+                    placeholder="Buscar o #etiqueta  ( / )"
                     aria-label="Buscar documentos"
                     autocomplete="off"
                 />
@@ -45,10 +45,14 @@
             <main class="main">
                 <div class="main_header">
                     <button class="menu_button" id="menu_button" aria-label="Abrir menu">☰</button>
-                    <p class="main_slug" id="document_slug"></p>
+                    <nav class="breadcrumb" id="document_path" aria-label="Sección" hidden></nav>
                 </div>
                 <h1 class="main_title" id="document_title"></h1>
-                <p class="main_updated" id="document_updated" hidden></p>
+                <p class="main_summary" id="document_summary" hidden></p>
+                <div class="main_meta">
+                    <ul class="doc_tags" id="document_tags" aria-label="Etiquetas" hidden></ul>
+                    <p class="main_updated" id="document_updated" hidden></p>
+                </div>
                 <p class="loading" id="loading">Cargando...</p>
                 <zero-md id="content" hidden>
                     <template data-append>

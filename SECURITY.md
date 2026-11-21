@@ -11,7 +11,7 @@ La protección de los datos no depende de ocultar la llave publicable, sino de l
 
 ## Estado actual
 
-> ⚠️ **Pendiente:** el panel de administración todavía no tiene inicio de sesión, y las tablas aceptan escrituras con la llave publicable. Mientras no se apliquen el login y las políticas RLS del ADR 0007, cualquier persona con la llave puede modificar documentos.
+> ⚠️ **Pendiente:** el panel de administración todavía no tiene inicio de sesión, y las tablas aceptan escrituras con la llave publicable. Mientras no se apliquen el login y las políticas RLS del ADR 0007, cualquier persona con la llave puede modificar documentos y leer los borradores a través de la API.
 
 ## Si se filtra una llave secreta
 

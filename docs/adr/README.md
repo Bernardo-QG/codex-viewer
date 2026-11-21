@@ -11,3 +11,4 @@ Decisiones de arquitectura del proyecto. Cómo y cuándo escribir uno: [0001](00
 | [0005](0005-editor-easymde.md)                            | EasyMDE como editor del panel de administración            | Aceptado  |
 | [0006](0006-categorias-y-orden-de-documentos.md)          | Categorías y orden manual de documentos                    | Aceptado  |
 | [0007](0007-seguridad-con-llave-publicable-y-rls.md)      | Llave publicable en el cliente y protección con RLS y Auth | Propuesto |
+| [0008](0008-secciones-etiquetas-y-estado.md)              | Secciones anidadas, etiquetas, estado y resumen            | Aceptado  |

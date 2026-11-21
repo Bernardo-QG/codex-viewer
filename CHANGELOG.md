@@ -14,6 +14,15 @@ Todos los cambios relevantes del proyecto. El formato sigue [Keep a Changelog](h
 - Botón para copiar los bloques de código.
 - Fecha de última actualización en cada documento.
 - README en inglés con diagrama de arquitectura y versión en español (`README.es.md`).
+- Secciones anidadas: el menú muestra un árbol plegable y cada documento su ruta (Desarrollo › Backend).
+- Etiquetas por documento; al hacer clic en una se filtra el menú, y en la búsqueda funciona `#etiqueta`.
+- Estado borrador/publicado. Los borradores solo se ven en el panel o con `?preview=1`.
+- Resumen por documento: se muestra bajo el título y se usa en la búsqueda y en la meta `description`.
+- Migración `db/migrations/2026-11-21_secciones_etiquetas_estado.sql` y ADR 0008.
+
+### Cambiado
+
+- El panel guarda por `id` en lugar de `slug` y agrega estado, resumen, sección con sangría y etiquetas con autocompletado.
 
 ## [1.0.0] - 2026-11-21
 

@@ -1,6 +1,6 @@
 # 0006. Categorías y orden manual de documentos
 
-- **Estado:** Aceptado
+- **Estado:** Aceptado, ampliado por [0008](0008-secciones-etiquetas-y-estado.md)
 - **Fecha:** 2026-08-22
 
 ## Contexto

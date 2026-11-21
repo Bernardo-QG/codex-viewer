@@ -15,8 +15,10 @@
 
 **Visor**
 
-- Documentos agrupados por categoría en el menú lateral, con orden manual
-- Búsqueda instantánea por título o categoría (`/` para enfocar, `Enter` para abrir, `Esc` para limpiar)
+- Secciones anidadas en un árbol plegable, con la ruta (Desarrollo › Backend) en cada documento
+- Etiquetas que cruzan secciones: clic en una para filtrar, o busca `#etiqueta`
+- Búsqueda instantánea por título, resumen, sección y etiquetas (`/` para enfocar, `Enter` para abrir, `Esc` para limpiar)
+- Resumen de una línea bajo el título, usado también como descripción al compartir
 - Índice de cada documento que resalta la sección que estás leyendo
 - Botón para copiar los bloques de código
 - Fecha de última actualización en cada documento
@@ -25,7 +27,8 @@
 **Panel de administración** (`admin.html`)
 
 - Crear, editar y eliminar documentos con editor Markdown
-- Asignar categoría y orden, y abrir la página publicada con un clic
+- Estado borrador/publicado, con vista previa para borradores
+- Elegir la sección en un árbol con sangría, definir el orden y agregar etiquetas con autocompletado
 - Validación del formato del slug y aviso claro si está duplicado
 
 ## Arquitectura
@@ -38,7 +41,7 @@ flowchart LR
     end
     subgraph Supabase
         R["API REST<br/>PostgREST"]
-        DB[("PostgreSQL<br/>documents · categories")]
+        DB[("PostgreSQL<br/>documents · categories<br/>tags · document_tags")]
     end
     CDN["CDN jsDelivr<br/>zero-md · EasyMDE · supabase-js"]
 
@@ -51,7 +54,7 @@ flowchart LR
 
 No hay backend ni paso de compilación: dos páginas HTML consultan directamente la API REST que genera Supabase, y GitHub Pages publica los archivos tal cual.
 
-Cada decisión está documentada como [ADR](docs/adr/README.md): sitio estático, render de Markdown en el cliente, Supabase como almacenamiento, categorías en tabla aparte y seguridad con RLS.
+Cada decisión está documentada como [ADR](docs/adr/README.md): sitio estático, render de Markdown en el cliente, Supabase como almacenamiento, secciones anidadas con etiquetas y estado, y seguridad con RLS.
 
 ### Notas de ingeniería
 
@@ -79,14 +82,15 @@ HTML · CSS · JavaScript (módulos ES) · [Supabase](https://supabase.com/) · 
 │   ├── images/           Imágenes que usan los documentos
 │   └── bruno/            Colección de la API para Bruno
 ├── db/
-│   ├── schema.sql        Tablas, índice y trigger de updated_at
-│   └── seed.sql          Datos de ejemplo
+│   ├── schema.sql        Esquema completo para una instalación nueva
+│   ├── migrations/       Actualizaciones idempotentes para bases existentes
+│   └── seed.sql          Secciones, documentos y etiquetas de ejemplo
 └── docs/adr/             Decisiones de arquitectura
 ```
 
 ## Cómo empezar
 
-1. Crea un proyecto en Supabase y ejecuta `db/schema.sql` en el SQL Editor.
+1. Crea un proyecto en Supabase y ejecuta `db/schema.sql` en el SQL Editor. Para actualizar una base existente, ejecuta en su lugar los archivos de `db/migrations/`.
 2. Coloca la URL del proyecto y la llave publicable en `assets/js/config.js`.
 3. Sirve la carpeta en local. Los módulos ES no cargan desde `file://`:
 
@@ -94,24 +98,27 @@ HTML · CSS · JavaScript (módulos ES) · [Supabase](https://supabase.com/) · 
    python -m http.server 3000   # o "Open with Live Server" en VS Code
    ```
 
-4. Abre http://localhost:3000. Los documentos se administran en `/admin.html`; las categorías se crean por SQL:
+4. Abre http://localhost:3000. Los documentos se administran en `/admin.html`; las secciones se crean por SQL:
 
    ```sql
-   INSERT INTO categories (name, slug, sort_order) VALUES ('Herramientas', 'herramientas', 1);
+   INSERT INTO categories (name, slug, sort_order) VALUES ('Desarrollo', 'desarrollo', 1);
+
+   INSERT INTO categories (parent_id, name, slug)
+   SELECT id, 'Backend', 'backend' FROM categories WHERE slug = 'desarrollo';
    ```
 
 ## Pendientes
 
 - [ ] Login del panel con Supabase Auth y Row Level Security ([ADR 0007](docs/adr/0007-seguridad-con-llave-publicable-y-rls.md))
 - [ ] Respaldo programado de los documentos en archivos Markdown
-- [ ] Administración de categorías y subida de imágenes desde el panel
+- [ ] Administración de secciones y subida de imágenes desde el panel
 
 ## Convenciones
 
 - **Commits:** [Conventional Commits](https://www.conventionalcommits.org/es/) en una sola línea, en español y en minúsculas: `tipo(alcance): descripcion`.
 - **Código:** funciones y variables en español con camelCase (`listarDocumentos`), clases CSS en snake_case (`sidebar_list`).
 - **Formato:** `.editorconfig` (4 espacios, UTF-8) y `.gitattributes` (LF).
-- **Esquema:** todo cambio se refleja en `db/schema.sql` en el mismo commit; los cambios relevantes van al [CHANGELOG](CHANGELOG.md).
+- **Esquema:** todo cambio va en `db/schema.sql` y en una migración fechada en `db/migrations/`, en el mismo commit; los cambios relevantes van al [CHANGELOG](CHANGELOG.md).
 
 ## Seguridad
 

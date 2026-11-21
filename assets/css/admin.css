@@ -80,7 +80,8 @@
 }
 
 .form_group input,
-.form_group select {
+.form_group select,
+.form_group textarea:not(#input_content) {
     padding: 0.6rem 0.75rem;
     border: 1px solid #555;
     border-radius: 4px;
@@ -91,7 +92,8 @@
 }
 
 .form_group input:focus,
-.form_group select:focus {
+.form_group select:focus,
+.form_group textarea:focus {
     outline: none;
     border-color: var(--link-color);
 }
@@ -111,6 +113,40 @@
 
 .form_row .form_group_small {
     flex: 0 0 7rem;
+}
+
+.form_row .form_group_medium {
+    flex: 0 0 11rem;
+}
+
+.form_group textarea {
+    resize: vertical;
+    line-height: 1.4;
+}
+
+.form_hint {
+    margin-left: 0.4rem;
+    text-transform: none;
+    letter-spacing: normal;
+    opacity: 0.7;
+}
+
+.extendido[hidden] {
+    display: none;
+}
+
+.admin_notice {
+    margin-bottom: 1.25rem;
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--link-color-hover);
+    border-radius: 4px;
+    background-color: rgba(212, 43, 184, 0.08);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.admin_notice code {
+    font-size: 0.8rem;
 }
 
 .form_group_editor {

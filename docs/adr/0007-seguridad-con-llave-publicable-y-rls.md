@@ -13,8 +13,8 @@ Hoy `admin.html` escribe con esa misma llave, así que la tabla acepta escritura
 
 - La llave **publicable** (`sb_publishable_…`) se acepta como pública, porque está diseñada para eso.
 - La llave **secreta** (`sb_secret_…` o `service_role`) nunca entra al repositorio. Solo se usa en herramientas locales como Bruno, en entornos que no se versionan.
-- Se habilita RLS en `documents` y `categories`:
-  - `SELECT` para `anon` y `authenticated`.
+- Se habilita RLS en `documents`, `categories`, `tags` y `document_tags`:
+  - `SELECT` para `anon` solo de documentos con `status = 'published'` (ver [0008](0008-secciones-etiquetas-y-estado.md)); `categories`, `tags` y `document_tags` de lectura pública.
   - `INSERT`, `UPDATE` y `DELETE` solo para el UUID del autor.
 - `admin.html` pide iniciar sesión con Supabase Auth (correo y contraseña) y el registro público se desactiva.
 
