@@ -2,7 +2,7 @@
 <html lang="es">
     <head>
         <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="robots" content="noindex" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <link rel="stylesheet" href="assets/css/styles.css" />
@@ -12,11 +12,11 @@
         <!-- EasyMDE editor de markdown -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde@2.18.0/dist/easymde.min.css" />
 
-        <title>Admin — DESARROLLO TI 55</title>
+        <title>Admin — Codex</title>
     </head>
     <body>
-        <nav>
-            <a href="/" class="nav_brand">DESARROLLO TI 55</a>
+        <nav aria-label="Principal">
+            <a href="./" class="nav_brand">CODEX</a>
             <a href="admin.html" class="nav_link">Admin</a>
         </nav>
 
@@ -37,7 +37,19 @@
                     </div>
                     <div class="form_group">
                         <label for="input_slug">Slug</label>
-                        <input type="text" id="input_slug" placeholder="mi-documento" required />
+                        <input type="text" id="input_slug" placeholder="mi-documento" pattern="[a-z0-9]+(-[a-z0-9]+)*" required />
+                    </div>
+                    <div class="form_row" id="group_category" hidden>
+                        <div class="form_group">
+                            <label for="input_category">Categoría</label>
+                            <select id="input_category">
+                                <option value="">Sin categoría</option>
+                            </select>
+                        </div>
+                        <div class="form_group form_group_small">
+                            <label for="input_order">Orden</label>
+                            <input type="number" id="input_order" value="0" step="1" />
+                        </div>
                     </div>
                     <div class="form_group form_group_editor">
                         <label for="input_content">Contenido (Markdown)</label>
@@ -46,6 +58,7 @@
                     <div class="form_actions">
                         <button type="submit" class="btn btn_primary" id="btn_guardar">Guardar</button>
                         <button type="button" class="btn btn_danger" id="btn_eliminar" hidden>Eliminar</button>
+                        <a class="form_link" id="link_ver" target="_blank" rel="noopener" hidden>Ver publicado ↗</a>
                         <span class="form_status" id="form_status"></span>
                     </div>
                 </form>

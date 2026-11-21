@@ -1,0 +1,10 @@
+# Normaliza saltos de linea: LF en el repo y en el working tree
+* text=auto eol=lf
+
+# Binarios
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.dia binary

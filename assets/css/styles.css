@@ -129,6 +129,37 @@ nav {
     font-weight: var(--bold-font);
 }
 
+/* Grupos por categoria (sidebar y admin) */
+.list_group {
+    margin-top: 0.75rem;
+}
+
+.list_group:first-child {
+    margin-top: 0;
+}
+
+.list_group_title {
+    display: block;
+    padding: 0 0.75rem 0.35rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-color-muted);
+}
+
+.list_group_items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.list_error {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    color: #f44336;
+}
+
 /* Main content */
 .main {
     flex: 1;

@@ -79,7 +79,8 @@
     color: var(--text-color-muted);
 }
 
-.form_group input {
+.form_group input,
+.form_group select {
     padding: 0.6rem 0.75rem;
     border: 1px solid #555;
     border-radius: 4px;
@@ -89,9 +90,27 @@
     font-family: inherit;
 }
 
-.form_group input:focus {
+.form_group input:focus,
+.form_group select:focus {
     outline: none;
     border-color: var(--link-color);
+}
+
+.form_row {
+    display: flex;
+    gap: 1rem;
+}
+
+.form_row[hidden] {
+    display: none;
+}
+
+.form_row .form_group {
+    flex: 1;
+}
+
+.form_row .form_group_small {
+    flex: 0 0 7rem;
 }
 
 .form_group_editor {
@@ -159,6 +178,15 @@
 
 .btn_danger:hover {
     background-color: #a01f08;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.form_link {
+    font-size: 0.85rem;
 }
 
 /* Status */

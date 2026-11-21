@@ -1,22 +1,30 @@
-# DESAROLLADOR TI 55
-___
-_2026-02-11_
+# Codex
 
-<br>
+Visualizador de documentos Markdown con panel de administración. Los documentos viven en Supabase (base de datos `codex`) y se agrupan por categoría en el menú lateral.
 
-<center>
-<img src="https://avatars.githubusercontent.com/u/174903163" style="width: 80%; max-width: 350px; height: auto; border-radius: 50%; object-fit: cover;">
-</center>
+**Sitio:** https://bernardo-qg.github.io/codex-viewer/
 
-<br>
+## Estructura
 
-<br>
+| Ruta | Descripción |
+| --- | --- |
+| `index.html` | Visor público: sidebar agrupado por categoría y renderizado con zero-md |
+| `admin.html` | Panel CRUD con editor EasyMDE, categoría y orden por documento |
+| `assets/js/utils.js` | Cliente Supabase y utilidades compartidas (consulta, orden, listado, escape de HTML) |
+| `assets/js/api.js` | Lógica del visor |
+| `assets/js/admin.js` | Lógica del panel |
+| `db/schema.sql` | Tablas `categories` y `documents`, índice y trigger de `updated_at` |
+| `db/seed.sql` | Datos de ejemplo (no ejecutar en producción) |
+| `assets/bruno/` | Colección de Bruno para probar la API REST |
 
-### Sinopsis
+## Configuración
 
-"Si encontramos una pista tendremos el suficiente impulso para avanzar", No siempre es claro comó ser un buen programador, ni como realizar un proyecto de software,
-por eso qué aquí me dia a la tarea de reunir algunos conceptos, conocimientos, temas e indicaciones para ir avanzando sobre este dificil pero interesante camino.
+1. Crea el esquema ejecutando `db/schema.sql` en el SQL Editor de Supabase.
+2. Coloca la URL del proyecto y la llave publicable en `assets/js/config.js`.
+3. Sirve la carpeta con cualquier servidor estático (por ejemplo, `npx serve .`) o publícala en GitHub Pages.
 
-[Perfil GITHUB](https://github.com/desarrolloti55)
+Las categorías se crean directamente en la tabla `categories`; el panel permite asignarlas y definir el orden de cada documento. Si la tabla aún no existe, el sitio sigue funcionando con una lista simple.
 
-[Pagina WEB](https://desarrolloti55.github.io/)
+## Autor
+
+[Bernardo Quintino Guzmán](https://github.com/Bernardo-QG)

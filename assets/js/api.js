@@ -1,62 +1,44 @@
-import { CONFIG } from './config.js';
+import { SITE_NAME, sb, obtenerSlugDeURL, obtenerDocumentos, renderizarLista, marcarActivo } from './utils.js';
 
-const sb = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
+const lista = document.getElementById('document_list');
+const loading = document.getElementById('loading');
+const content = document.getElementById('content');
+const titulo = document.getElementById('document_title');
+const etiquetaSlug = document.getElementById('document_slug');
+
+let documentos = [];
+let peticionActual = 0;
 
 function encodeMarkdown(str) {
     return 'data:text/markdown;base64,' + btoa(unescape(encodeURIComponent(str)));
 }
 
-function obtenerSlugDeURL() {
-    const parametros = new URLSearchParams(window.location.search);
-    return parametros.get('doc');
-}
-
-function navegarA(slug) {
+function navegarA(slug, { reemplazar = false } = {}) {
     const url = new URL(window.location);
     url.searchParams.set('doc', slug);
-    window.history.pushState({}, '', url);
+    window.history[reemplazar ? 'replaceState' : 'pushState']({}, '', url);
     mostrarDocumentoPorSlug(slug);
 }
 
 async function listarDocumentos() {
-    const { data, error } = await sb
-        .from('documents')
-        .select('title, slug')
-        .order('id', { ascending: true });
+    const { data, error } = await obtenerDocumentos();
 
-    if (error) return;
+    if (error) {
+        lista.innerHTML = '<li class="list_error">No se pudo cargar la lista.</li>';
+        return;
+    }
 
-    const lista = document.getElementById('document_list');
-    const slugActivo = obtenerSlugDeURL();
-
-    lista.innerHTML = data.map(doc => {
-        const activo = doc.slug === slugActivo ? ' class="active"' : '';
-        return `<li${activo}><a href="?doc=${doc.slug}" data-slug="${doc.slug}">${doc.title}</a></li>`;
-    }).join('');
-
-    lista.addEventListener('click', (evento) => {
-        const enlace = evento.target.closest('a[data-slug]');
-        if (!enlace) return;
-        evento.preventDefault();
-        navegarA(enlace.dataset.slug);
-        marcarActivo(enlace.dataset.slug);
-        cerrarSidebar();
-    });
-}
-
-function marcarActivo(slug) {
-    const lista = document.getElementById('document_list');
-    lista.querySelectorAll('li').forEach(li => li.classList.remove('active'));
-    const enlace = lista.querySelector(`a[data-slug="${slug}"]`);
-    if (enlace) enlace.parentElement.classList.add('active');
+    documentos = data;
+    lista.innerHTML = renderizarLista(documentos);
 }
 
 async function mostrarDocumentoPorSlug(slug) {
-    const loading = document.getElementById('loading');
-    const content = document.getElementById('content');
+    // Evita que una respuesta lenta sobrescriba un documento abierto despues
+    const peticion = ++peticionActual;
 
     loading.hidden = false;
     content.hidden = true;
+    marcarActivo(lista, slug);
 
     const { data, error } = await sb
         .from('documents')
@@ -64,65 +46,59 @@ async function mostrarDocumentoPorSlug(slug) {
         .eq('slug', slug)
         .single();
 
+    if (peticion !== peticionActual) return;
+
     loading.hidden = true;
     content.hidden = false;
 
     if (error) {
-        document.getElementById('document_title').textContent = 'Documento no encontrado';
-        document.getElementById('document_slug').textContent = '';
+        titulo.textContent = 'Documento no encontrado';
+        etiquetaSlug.textContent = '';
         content.src = encodeMarkdown('# 404\nEl documento solicitado no existe.');
+        document.title = `No encontrado — ${SITE_NAME}`;
         return;
     }
 
-    document.getElementById('document_title').textContent = data.title;
-    document.getElementById('document_slug').textContent = data.slug;
+    titulo.textContent = data.title;
+    etiquetaSlug.textContent = data.slug;
     content.src = encodeMarkdown(data.content);
-    document.title = `${data.title} — DESARROLLO TI 55`;
+    document.title = `${data.title} — ${SITE_NAME}`;
+    window.scrollTo({ top: 0 });
 }
 
-async function mostrarPrimerDocumento() {
-    const { data, error } = await sb
-        .from('documents')
-        .select('slug')
-        .order('id', { ascending: true })
-        .limit(1)
-        .single();
-
-    if (error) return;
-    navegarA(data.slug);
-    marcarActivo(data.slug);
-}
-
-function configurarSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const botonMenu = document.getElementById('menu_button');
-    const botonCerrar = document.getElementById('sidebar_toggle');
-
-    botonMenu.addEventListener('click', () => sidebar.classList.add('open'));
-    botonCerrar.addEventListener('click', () => cerrarSidebar());
+function mostrarInicial() {
+    const slug = obtenerSlugDeURL();
+    if (slug) {
+        mostrarDocumentoPorSlug(slug);
+    } else if (documentos.length) {
+        navegarA(documentos[0].slug, { reemplazar: true });
+    } else {
+        loading.textContent = 'Aún no hay documentos.';
+    }
 }
 
 function cerrarSidebar() {
     document.getElementById('sidebar').classList.remove('open');
 }
 
-window.addEventListener('popstate', () => {
-    const slug = obtenerSlugDeURL();
-    if (slug) {
-        mostrarDocumentoPorSlug(slug);
-        marcarActivo(slug);
-    }
-});
+function configurarEventos() {
+    const sidebar = document.getElementById('sidebar');
+    document.getElementById('menu_button').addEventListener('click', () => sidebar.classList.add('open'));
+    document.getElementById('sidebar_toggle').addEventListener('click', cerrarSidebar);
+
+    lista.addEventListener('click', (evento) => {
+        const enlace = evento.target.closest('a[data-slug]');
+        if (!enlace) return;
+        evento.preventDefault();
+        if (enlace.dataset.slug !== obtenerSlugDeURL()) navegarA(enlace.dataset.slug);
+        cerrarSidebar();
+    });
+
+    window.addEventListener('popstate', mostrarInicial);
+}
 
 window.addEventListener('DOMContentLoaded', async () => {
-    configurarSidebar();
+    configurarEventos();
     await listarDocumentos();
-
-    const slug = obtenerSlugDeURL();
-    if (slug) {
-        mostrarDocumentoPorSlug(slug);
-        marcarActivo(slug);
-    } else {
-        mostrarPrimerDocumento();
-    }
+    mostrarInicial();
 });
