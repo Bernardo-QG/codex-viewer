@@ -72,3 +72,57 @@ CREATE TRIGGER trg_documents_updated_at
     BEFORE UPDATE ON documents
     FOR EACH ROW
     EXECUTE FUNCTION set_updated_at();
+
+-- =========================================================
+-- Row Level Security
+-- Lectura pública. La escritura con anon es TEMPORAL hasta que el panel
+-- tenga login (ver docs/adr/0007-seguridad-con-llave-publicable-y-rls.md).
+-- =========================================================
+-- ---------- documents ----------
+ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "documents_lectura_publica" ON documents
+    FOR SELECT TO anon, authenticated
+    USING (true);
+
+-- TEMPORAL: reemplazar por auth.uid() = '<uuid-del-autor>' al agregar login
+CREATE POLICY "documents_escritura_temporal" ON documents
+    FOR ALL TO anon, authenticated
+    USING (true) WITH CHECK (true);
+
+-- ---------- categories ----------
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "categories_lectura_publica" ON categories
+    FOR SELECT TO anon, authenticated
+    USING (true);
+
+-- TEMPORAL: reemplazar por auth.uid() = '<uuid-del-autor>' al agregar login
+CREATE POLICY "categories_escritura_temporal" ON categories
+    FOR ALL TO anon, authenticated
+    USING (true) WITH CHECK (true);
+
+-- ---------- tags ----------
+ALTER TABLE tags ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "tags_lectura_publica" ON tags
+    FOR SELECT TO anon, authenticated
+    USING (true);
+
+-- TEMPORAL: reemplazar por auth.uid() = '<uuid-del-autor>' al agregar login
+CREATE POLICY "tags_escritura_temporal" ON tags
+    FOR ALL TO anon, authenticated
+    USING (true) WITH CHECK (true);
+
+-- ---------- document_tags ----------
+ALTER TABLE document_tags ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "document_tags_lectura_publica" ON document_tags
+    FOR SELECT TO anon, authenticated
+    USING (true);
+
+-- TEMPORAL: reemplazar por auth.uid() = '<uuid-del-autor>' al agregar login
+CREATE POLICY "document_tags_escritura_temporal" ON document_tags
+    FOR ALL TO anon, authenticated
+    USING (true) WITH CHECK (true);
+
