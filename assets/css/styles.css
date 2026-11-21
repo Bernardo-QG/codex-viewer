@@ -23,6 +23,11 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+/* "hidden" siempre gana sobre display: flex/grid de las clases */
+[hidden] {
+    display: none !important;
+}
 /* Variable end */
 
 html {
@@ -47,8 +52,8 @@ a:hover {
     color: var(--link-color-hover);
 }
 
-/* Nav */
-nav {
+/* Nav (solo la barra superior; breadcrumb e indice tambien son <nav>) */
+body > nav {
     position: sticky;
     top: 0;
     z-index: 10;
