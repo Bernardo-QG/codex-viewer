@@ -1,5 +1,9 @@
 # Codex
 
+<p align="center">
+  <img src="https://avatars.githubusercontent.com/u/18334613?s=400&u=e7bdce3bde7c8aaca98e291e31f7fc2911203d8f&v=4" alt="Bernardo Quintino Guzmán" width="200" style="border-radius: 50%;" />
+</p>
+
 Visualizador de documentos Markdown con panel de administración. Los documentos viven en Supabase (base de datos `codex`) y se agrupan por categoría en el menú lateral.
 
 **Sitio:** https://bernardo-qg.github.io/codex-viewer/
