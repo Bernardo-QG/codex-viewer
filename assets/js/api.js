@@ -40,11 +40,7 @@ async function mostrarDocumentoPorSlug(slug) {
     content.hidden = true;
     marcarActivo(lista, slug);
 
-    const { data, error } = await sb
-        .from('documents')
-        .select('title, slug, content')
-        .eq('slug', slug)
-        .single();
+    const { data, error } = await sb.from('documents').select('title, slug, content').eq('slug', slug).single();
 
     if (peticion !== peticionActual) return;
 

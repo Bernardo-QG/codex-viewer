@@ -1,2 +1,16 @@
+# Editores
 *~
+.vscode/
+.idea/
+
+# Entornos y secretos (incluye entornos locales de Bruno)
+.env
+.env.*
+assets/bruno/environments/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Legado
 assets/documents

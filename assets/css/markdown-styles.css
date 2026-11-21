@@ -8,17 +8,25 @@ p {
     line-height: 1.7;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
 }
 
-table, th, td {
+table,
+th,
+td {
     border: 1px solid #555;
     border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
     padding: 0.5rem 0.75rem;
 }
 
@@ -34,8 +42,9 @@ a:hover {
     color: #d42bb8 !important;
 }
 
-pre, code {
-    font-family: Menlo, Monaco, "Courier New", monospace;
+pre,
+code {
+    font-family: Menlo, Monaco, 'Courier New', monospace;
 }
 
 code {
@@ -67,7 +76,8 @@ blockquote {
     background-color: rgba(53, 150, 220, 0.08);
 }
 
-ul, ol {
+ul,
+ol {
     margin-top: 0.75rem;
     padding-left: 1.5rem;
 }

@@ -1,9 +1,9 @@
 /* Fuente site: https://fonts.google.com/ */
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,900;1,700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,900;1,700&display=swap');
 
 /* Variable */
 :root {
-    --font-family: "Roboto", sans-serif;
+    --font-family: 'Roboto', sans-serif;
     --bold-font: 700;
     --bg-color: #2b2e31;
     --bg-color-nav: #1c1f20;
@@ -87,7 +87,6 @@ nav {
     height: calc(100vh - 56px);
     position: sticky;
     top: 56px;
-    
 }
 
 .sidebar_toggle {

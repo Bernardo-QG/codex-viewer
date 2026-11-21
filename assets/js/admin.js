@@ -31,7 +31,9 @@ function mostrarEstado(mensaje, tipo) {
     clearTimeout(temporizadorEstado);
     formStatus.textContent = mensaje;
     formStatus.className = `form_status ${tipo}`;
-    temporizadorEstado = setTimeout(() => { formStatus.textContent = ''; }, 3000);
+    temporizadorEstado = setTimeout(() => {
+        formStatus.textContent = '';
+    }, 3000);
 }
 
 function generarSlug(titulo) {
@@ -70,15 +72,13 @@ function limpiarFormulario({ actualizarURL = true } = {}) {
 }
 
 async function cargarCategorias() {
-    const { data, error } = await sb
-        .from('categories')
-        .select('id, name')
-        .order('sort_order', { ascending: true });
+    const { data, error } = await sb.from('categories').select('id, name').order('sort_order', { ascending: true });
 
     if (error) return;
 
-    inputCategory.innerHTML = '<option value="">Sin categoría</option>' +
-        data.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+    inputCategory.innerHTML =
+        '<option value="">Sin categoría</option>' +
+        data.map((c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
 }
 
 async function listarDocumentos() {
@@ -97,11 +97,7 @@ async function listarDocumentos() {
 
 async function cargarDocumento(slug) {
     const campos = conCategorias ? 'title, slug, content, category_id, sort_order' : 'title, slug, content';
-    const { data, error } = await sb
-        .from('documents')
-        .select(campos)
-        .eq('slug', slug)
-        .single();
+    const { data, error } = await sb.from('documents').select(campos).eq('slug', slug).single();
 
     if (error) {
         mostrarEstado('Documento no encontrado', 'error');
@@ -168,10 +164,7 @@ async function eliminarDocumento() {
     const confirmado = confirm(`¿Eliminar "${inputTitle.value}"? Esta acción no se puede deshacer.`);
     if (!confirmado) return;
 
-    const { error } = await sb
-        .from('documents')
-        .delete()
-        .eq('slug', slugEditando);
+    const { error } = await sb.from('documents').delete().eq('slug', slugEditando);
 
     if (error) {
         mostrarEstado(`Error: ${error.message}`, 'error');

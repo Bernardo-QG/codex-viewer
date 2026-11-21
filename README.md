@@ -26,20 +26,21 @@ Visualizador de documentos Markdown con panel de administración. Los documentos
 
 ## Estructura
 
-| Ruta | Descripción |
-| --- | --- |
-| `index.html` | Visor público |
-| `admin.html` | Panel de administración |
-| `assets/js/config.js` | URL de Supabase y llave publicable |
-| `assets/js/utils.js` | Cliente Supabase y utilidades compartidas (consulta, orden, listado, escape de HTML) |
-| `assets/js/api.js` | Lógica del visor |
-| `assets/js/admin.js` | Lógica del panel |
-| `assets/css/` | Estilos generales (`styles.css`), del panel (`admin.css`) y del Markdown (`markdown-styles.css`) |
-| `assets/images/` | Imágenes que usan los documentos |
-| `assets/bruno/` | Colección de Bruno para listar y crear o actualizar documentos |
-| `db/schema.sql` | Tablas `categories` y `documents`, índice y trigger de `updated_at` |
-| `db/seed.sql` | Datos de ejemplo (no ejecutar en producción) |
-| `.gitattributes` | Normaliza los saltos de línea a LF |
+| Ruta                  | Descripción                                                                                      |
+| --------------------- | ------------------------------------------------------------------------------------------------ |
+| `index.html`          | Visor público                                                                                    |
+| `admin.html`          | Panel de administración                                                                          |
+| `assets/js/config.js` | URL de Supabase y llave publicable                                                               |
+| `assets/js/utils.js`  | Cliente Supabase y utilidades compartidas (consulta, orden, listado, escape de HTML)             |
+| `assets/js/api.js`    | Lógica del visor                                                                                 |
+| `assets/js/admin.js`  | Lógica del panel                                                                                 |
+| `assets/css/`         | Estilos generales (`styles.css`), del panel (`admin.css`) y del Markdown (`markdown-styles.css`) |
+| `assets/images/`      | Imágenes que usan los documentos                                                                 |
+| `assets/bruno/`       | Colección de Bruno para listar y crear o actualizar documentos                                   |
+| `db/schema.sql`       | Tablas `categories` y `documents`, índice y trigger de `updated_at`                              |
+| `db/seed.sql`         | Datos de ejemplo (no ejecutar en producción)                                                     |
+| `docs/adr/`           | Decisiones de arquitectura (ADR)                                                                 |
+| `.gitattributes`      | Normaliza los saltos de línea a LF                                                               |
 
 ## Configuración
 
@@ -57,6 +58,26 @@ INSERT INTO categories (name, slug, sort_order) VALUES ('Herramientas', 'herrami
 
 El menú se ordena por `sort_order` de la categoría y después por `sort_order` del documento. Los documentos sin categoría aparecen al final.
 
-## Autor
+## Desarrollo
 
-[Bernardo Quintino Guzmán](https://github.com/Bernardo-QG)
+No hace falta instalar nada. Como el sitio usa módulos ES, se debe servir con un servidor local; abrir el HTML con doble clic no funciona:
+
+```bash
+python -m http.server 3000   # o "Open with Live Server" en VS Code
+```
+
+## Convenciones
+
+- **Commits:** [Conventional Commits](https://www.conventionalcommits.org/es/) en una sola línea, en español y en minúsculas: `tipo(alcance): descripcion`. Tipos: `feat`, `fix`, `docs`, `style`, `refactor` y `chore`.
+- **Código:** funciones y variables en español con camelCase (`listarDocumentos`), clases CSS en snake_case (`sidebar_list`). El texto que viene de la base pasa por `escapeHtml` antes de insertarse con `innerHTML`.
+- **Formato:** `.editorconfig` (4 espacios, UTF-8) y `.gitattributes` (LF).
+- **Base de datos:** todo cambio de esquema se refleja en `db/schema.sql` en el mismo commit.
+- **Decisiones:** las de arquitectura se registran como [ADR](docs/adr/README.md) y los cambios en el [CHANGELOG](CHANGELOG.md).
+
+## Seguridad
+
+Ver [SECURITY.md](SECURITY.md).
+
+## Licencia
+
+[MIT](LICENSE) © 2026 [Bernardo Quintino Guzmán](https://github.com/Bernardo-QG)
