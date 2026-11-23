@@ -24,6 +24,7 @@ Todos los cambios relevantes del proyecto. El formato sigue [Keep a Changelog](h
 - Tema claro / oscuro con botón en la barra superior, que respeta la preferencia del sistema.
 - Barra de progreso de lectura, esqueleto de carga y aparición suave del contenido.
 - El menú recuerda las secciones plegadas, se desplaza al documento activo y en móvil se cierra con un fondo oscurecido o con `Esc`.
+- Pestañas en el panel para administrar secciones (crear, anidar, ordenar, describir y eliminar) y etiquetas (crear, renombrar, eliminar y quitar las que no se usan), con el número de documentos de cada una.
 
 ### Cambiado
 

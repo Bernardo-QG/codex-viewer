@@ -9,6 +9,8 @@ import {
     marcarActivo,
     recordarSeccionesPlegadas
 } from './utils.js';
+import { iniciarSecciones } from './admin-secciones.js';
+import { iniciarEtiquetas } from './admin-etiquetas.js';
 
 // Documento en edicion: id para guardar y slug para la URL
 let idEditando = null;
@@ -272,7 +274,44 @@ formDocumento.addEventListener('submit', guardarDocumento);
 btnEliminar.addEventListener('click', eliminarDocumento);
 btnNuevo.addEventListener('click', () => limpiarFormulario());
 
+// ---------- Pestanas: documentos, secciones y etiquetas ----------
+
+const VISTAS = ['documentos', 'secciones', 'etiquetas'];
+const vistas = {};
+
+function vistaDeURL() {
+    const vista = new URLSearchParams(window.location.search).get('vista');
+    return VISTAS.includes(vista) && completo ? vista : 'documentos';
+}
+
+function mostrarVista(vista, { actualizarURL = true } = {}) {
+    document.querySelectorAll('.admin_tabs [role="tab"]').forEach((tab) => {
+        tab.setAttribute('aria-selected', String(tab.dataset.vista === vista));
+    });
+    document.querySelectorAll('[data-panel]').forEach((panel) => {
+        panel.hidden = panel.dataset.panel !== vista;
+    });
+
+    if (actualizarURL) {
+        const url = new URL(window.location);
+        url.search = vista === 'documentos' ? (slugEditando ? `?doc=${encodeURIComponent(slugEditando)}` : '') : `?vista=${vista}`;
+        window.history.pushState({}, '', url);
+    }
+
+    // Las vistas de secciones y etiquetas se crean la primera vez que se abren
+    if (vista === 'secciones') (vistas.secciones ??= iniciarSecciones({ alCambiar: cargarListas })).cargar();
+    if (vista === 'etiquetas') (vistas.etiquetas ??= iniciarEtiquetas({ alCambiar: cargarListas })).cargar();
+}
+
+document.querySelector('.admin_tabs').addEventListener('click', (evento) => {
+    const tab = evento.target.closest('[role="tab"]');
+    if (tab && tab.getAttribute('aria-selected') !== 'true') mostrarVista(tab.dataset.vista);
+});
+
 window.addEventListener('popstate', () => {
+    const vista = vistaDeURL();
+    mostrarVista(vista, { actualizarURL: false });
+    if (vista !== 'documentos') return;
     const slug = obtenerSlugDeURL();
     if (slug) cargarDocumento(slug);
     else limpiarFormulario({ actualizarURL: false });
@@ -281,6 +320,11 @@ window.addEventListener('popstate', () => {
 window.addEventListener('DOMContentLoaded', async () => {
     await cargarListas();
 
+    const vista = vistaDeURL();
+    if (vista !== 'documentos') {
+        mostrarVista(vista, { actualizarURL: false });
+        return;
+    }
     const slug = obtenerSlugDeURL();
     if (slug) cargarDocumento(slug);
 });

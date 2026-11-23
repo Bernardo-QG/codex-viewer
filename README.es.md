@@ -33,6 +33,7 @@
 - Crear, editar y eliminar documentos con editor Markdown
 - Estado borrador/publicado, con vista previa para borradores
 - Elegir la sección en un árbol con sangría, definir el orden y agregar etiquetas con autocompletado
+- Administrar secciones (anidar, ordenar, describir y eliminar con seguridad) y etiquetas (renombrar, eliminar y limpiar las que no se usan) en sus propias pestañas, con el número de documentos de cada una
 - Validación del formato del slug y aviso claro si está duplicado
 
 ## Arquitectura
@@ -105,20 +106,13 @@ HTML · CSS · JavaScript (módulos ES) · [Supabase](https://supabase.com/) · 
    python -m http.server 3000   # o "Open with Live Server" en VS Code
    ```
 
-4. Abre http://localhost:3000. Los documentos se administran en `/admin.html`; las secciones se crean por SQL:
-
-   ```sql
-   INSERT INTO categories (name, slug, sort_order) VALUES ('Desarrollo', 'desarrollo', 1);
-
-   INSERT INTO categories (parent_id, name, slug)
-   SELECT id, 'Backend', 'backend' FROM categories WHERE slug = 'desarrollo';
-   ```
+4. Abre http://localhost:3000. Todo se administra en `/admin.html`: documentos, secciones y etiquetas tienen cada uno su pestaña.
 
 ## Pendientes
 
 - [ ] Login del panel con Supabase Auth y Row Level Security ([ADR 0007](docs/adr/0007-seguridad-con-llave-publicable-y-rls.md))
 - [ ] Respaldo programado de los documentos en archivos Markdown
-- [ ] Administración de secciones y subida de imágenes desde el panel
+- [ ] Subida de imágenes desde el panel
 
 ## Convenciones
 

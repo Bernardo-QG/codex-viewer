@@ -38,5 +38,5 @@ Con categorías de un solo nivel (ver [0006](0006-categorias-y-orden-de-document
 - El menú refleja la estructura del conocimiento, con secciones plegables y documentos sueltos en la raíz.
 - La búsqueda cubre título, resumen, sección y etiquetas; `#etiqueta` filtra por etiqueta exacta.
 - **Los borradores se ocultan en la interfaz, pero la API los sigue entregando** mientras no exista RLS. La política de [0007](0007-seguridad-con-llave-publicable-y-rls.md) debe limitar la lectura anónima a `status = 'published'`.
-- Las etiquetas que dejan de usarse quedan en el catálogo; se pueden limpiar por SQL.
-- Falta una pantalla para administrar secciones; por ahora se crean por SQL (ver `db/seed.sql`).
+- Las etiquetas que dejan de usarse quedan en el catálogo; el panel las muestra con 0 usos y permite quitarlas todas de una vez.
+- Secciones y etiquetas se administran desde sus pestañas en el panel. Una sección con subsecciones no se puede eliminar hasta moverlas o eliminarlas (la base lo impide con `ON DELETE RESTRICT` y el panel lo explica antes de intentarlo).

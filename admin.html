@@ -35,15 +35,37 @@
         </nav>
 
         <div class="admin_layout">
-            <!-- Lista de documentos -->
             <aside class="admin_sidebar">
-                <h2 class="admin_sidebar_title">Documentos</h2>
-                <button class="btn btn_primary" id="btn_nuevo">+ Nuevo</button>
-                <ul class="admin_list" id="document_list"></ul>
+                <div class="admin_tabs" role="tablist" aria-label="Qué administrar">
+                    <button type="button" role="tab" data-vista="documentos" aria-selected="true">Documentos</button>
+                    <button type="button" role="tab" data-vista="secciones" aria-selected="false" class="extendido">
+                        Secciones
+                    </button>
+                    <button type="button" role="tab" data-vista="etiquetas" aria-selected="false" class="extendido">
+                        Etiquetas
+                    </button>
+                </div>
+
+                <div class="admin_panel" data-panel="documentos">
+                    <button class="btn btn_primary" id="btn_nuevo">+ Nuevo documento</button>
+                    <ul class="admin_list" id="document_list"></ul>
+                </div>
+
+                <div class="admin_panel" data-panel="secciones" hidden>
+                    <button class="btn btn_primary" id="btn_nueva_seccion">+ Nueva sección</button>
+                    <ul class="admin_list" id="lista_secciones"></ul>
+                </div>
+
+                <div class="admin_panel" data-panel="etiquetas" hidden>
+                    <button class="btn btn_primary" id="btn_nueva_etiqueta">+ Nueva etiqueta</button>
+                    <ul class="admin_list" id="lista_etiquetas_admin"></ul>
+                    <button class="btn btn_secondary" id="btn_limpiar_etiquetas" hidden>Quitar etiquetas sin uso</button>
+                </div>
             </aside>
 
             <!-- Formulario de edicion -->
             <main class="admin_main">
+                <div data-panel="documentos">
                 <p class="admin_notice" id="aviso_migracion" hidden>
                     Faltan las columnas y tablas nuevas. Ejecuta
                     <code>db/migrations/2026-11-21_secciones_etiquetas_estado.sql</code> en Supabase para usar
@@ -110,6 +132,67 @@
                         <span class="form_status" id="form_status" role="status"></span>
                     </div>
                 </form>
+                </div>
+
+                <!-- Secciones -->
+                <div data-panel="secciones" hidden>
+                    <form class="admin_form" id="form_seccion">
+                        <h2 class="admin_form_title" id="titulo_seccion">Nueva sección</h2>
+                        <div class="form_row">
+                            <div class="form_group">
+                                <label for="seccion_nombre">Nombre</label>
+                                <input type="text" id="seccion_nombre" placeholder="Backend" required />
+                            </div>
+                            <div class="form_group">
+                                <label for="seccion_slug">Slug</label>
+                                <input type="text" id="seccion_slug" pattern="[a-z0-9]+(-[a-z0-9]+)*" required />
+                            </div>
+                        </div>
+                        <div class="form_row">
+                            <div class="form_group">
+                                <label for="seccion_padre">Dentro de</label>
+                                <select id="seccion_padre"></select>
+                            </div>
+                            <div class="form_group form_group_small">
+                                <label for="seccion_orden">Orden</label>
+                                <input type="number" id="seccion_orden" value="0" step="1" />
+                            </div>
+                        </div>
+                        <div class="form_group">
+                            <label for="seccion_descripcion">Descripción <span class="form_hint">opcional</span></label>
+                            <textarea id="seccion_descripcion" rows="2" placeholder="De qué trata esta sección"></textarea>
+                        </div>
+                        <p class="form_info" id="info_seccion"></p>
+                        <div class="form_actions">
+                            <button type="submit" class="btn btn_primary" id="btn_guardar_seccion">Crear sección</button>
+                            <button type="button" class="btn btn_danger" id="btn_eliminar_seccion" hidden>Eliminar</button>
+                            <span class="form_status" id="estado_seccion" role="status"></span>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Etiquetas -->
+                <div data-panel="etiquetas" hidden>
+                    <form class="admin_form" id="form_etiqueta">
+                        <h2 class="admin_form_title" id="titulo_etiqueta">Nueva etiqueta</h2>
+                        <div class="form_row">
+                            <div class="form_group">
+                                <label for="etiqueta_nombre">Nombre</label>
+                                <input type="text" id="etiqueta_nombre" placeholder="git" required />
+                            </div>
+                            <div class="form_group">
+                                <label for="etiqueta_slug">Slug</label>
+                                <input type="text" id="etiqueta_slug" pattern="[a-z0-9]+(-[a-z0-9]+)*" required />
+                            </div>
+                        </div>
+                        <p class="form_info" id="info_etiqueta"></p>
+                        <div class="form_actions">
+                            <button type="submit" class="btn btn_primary" id="btn_guardar_etiqueta">Crear etiqueta</button>
+                            <button type="button" class="btn btn_danger" id="btn_eliminar_etiqueta" hidden>Eliminar</button>
+                            <span class="form_status" id="estado_etiqueta" role="status"></span>
+                        </div>
+                    </form>
+                </div>
             </main>
         </div>
 

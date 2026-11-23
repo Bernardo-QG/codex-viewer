@@ -33,6 +33,7 @@
 - Create, edit and delete documents with a Markdown editor
 - Draft / published status, with preview links for drafts
 - Pick a section from an indented tree, set the order and add tags with autocomplete
+- Manage sections (nest them, reorder, describe, delete safely) and tags (rename, delete, clean up unused ones) from their own tabs, with document counts
 - Slug format validation and friendly duplicate-slug errors
 
 ## Architecture
@@ -115,20 +116,13 @@ HTML · CSS · JavaScript (ES modules) · [Supabase](https://supabase.com/) · [
    python -m http.server 3000   # or "Open with Live Server" in VS Code
    ```
 
-4. Open http://localhost:3000. Documents are managed from `/admin.html`; sections are created in SQL:
-
-   ```sql
-   INSERT INTO categories (name, slug, sort_order) VALUES ('Development', 'development', 1);
-
-   INSERT INTO categories (parent_id, name, slug)
-   SELECT id, 'Backend', 'backend' FROM categories WHERE slug = 'development';
-   ```
+4. Open http://localhost:3000. Everything is managed from `/admin.html`: documents, sections and tags each have their own tab.
 
 ## Roadmap
 
 - [ ] Admin authentication with Supabase Auth and Row Level Security ([ADR 0007](docs/adr/0007-seguridad-con-llave-publicable-y-rls.md))
 - [ ] Scheduled backup of all documents to Markdown files
-- [ ] Section management and image uploads from the admin panel
+- [ ] Image uploads from the admin panel
 
 ## Conventions
 
