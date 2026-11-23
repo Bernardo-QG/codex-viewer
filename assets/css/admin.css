@@ -11,7 +11,7 @@
     min-width: 260px;
     background-color: var(--bg-color-sidebar);
     padding: 1.5rem 1rem;
-    border-right: 1px solid #3a3e42;
+    border-right: 1px solid var(--border-color);
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -42,12 +42,12 @@
 }
 
 .admin_list li a:hover {
-    background-color: #3a3e42;
+    background-color: var(--bg-hover);
     color: var(--link-color);
 }
 
 .admin_list li.active a {
-    background-color: #3a3e42;
+    background-color: var(--bg-hover);
     color: var(--link-color);
     font-weight: var(--bold-font);
 }
@@ -83,9 +83,9 @@
 .form_group select,
 .form_group textarea:not(#input_content) {
     padding: 0.6rem 0.75rem;
-    border: 1px solid #555;
+    border: 1px solid var(--input-border);
     border-radius: 4px;
-    background-color: #1e1e1e;
+    background-color: var(--input-bg);
     color: var(--text-color);
     font-size: 1rem;
     font-family: inherit;
@@ -132,7 +132,7 @@
     padding: 0.75rem 1rem;
     border-left: 3px solid var(--link-color-hover);
     border-radius: 4px;
-    background-color: rgba(212, 43, 184, 0.08);
+    background-color: color-mix(in srgb, var(--link-color-hover) 8%, transparent);
     font-size: 0.85rem;
     line-height: 1.5;
 }
@@ -147,13 +147,13 @@
 
 /* EasyMDE overrides para tema oscuro */
 .EasyMDEContainer .CodeMirror {
-    background-color: #1e1e1e;
+    background-color: var(--input-bg);
     color: var(--text-color);
-    border-color: #555;
+    border-color: var(--input-border);
 }
 
 .EasyMDEContainer .editor-toolbar {
-    border-color: #555;
+    border-color: var(--input-border);
 }
 
 .EasyMDEContainer .editor-toolbar button {
@@ -162,7 +162,7 @@
 
 .EasyMDEContainer .editor-toolbar button:hover,
 .EasyMDEContainer .editor-toolbar button.active {
-    background-color: #3a3e42;
+    background-color: var(--bg-hover);
 }
 
 .EasyMDEContainer .CodeMirror-cursor {
@@ -223,11 +223,11 @@
 }
 
 .form_status.success {
-    color: #4caf50;
+    color: var(--success-color);
 }
 
 .form_status.error {
-    color: #f44336;
+    color: var(--danger-color);
 }
 
 /* Nav link */
@@ -252,7 +252,7 @@
         min-width: unset;
         max-height: 200px;
         border-right: none;
-        border-bottom: 1px solid #3a3e42;
+        border-bottom: 1px solid var(--border-color);
     }
 
     .admin_main {

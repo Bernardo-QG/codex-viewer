@@ -6,7 +6,8 @@ import {
     obtenerContenido,
     aplanarCategorias,
     renderizarArbol,
-    marcarActivo
+    marcarActivo,
+    recordarSeccionesPlegadas
 } from './utils.js';
 
 // Documento en edicion: id para guardar y slug para la URL
@@ -99,7 +100,7 @@ async function cargarListas() {
     document.querySelectorAll('.extendido').forEach((el) => (el.hidden = !completo));
     $('aviso_migracion').hidden = completo;
 
-    documentList.innerHTML = renderizarArbol(resultado.documentos, resultado.categorias, 'admin.html');
+    documentList.innerHTML = renderizarArbol(resultado.documentos, resultado.categorias, { hrefBase: 'admin.html' });
     marcarActivo(documentList, slugEditando);
 
     if (!completo) return;
@@ -266,6 +267,7 @@ documentList.addEventListener('click', (evento) => {
     cargarDocumento(enlace.dataset.slug);
 });
 
+recordarSeccionesPlegadas(documentList);
 formDocumento.addEventListener('submit', guardarDocumento);
 btnEliminar.addEventListener('click', eliminarDocumento);
 btnNuevo.addEventListener('click', () => limpiarFormulario());

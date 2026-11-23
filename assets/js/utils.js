@@ -101,55 +101,119 @@ function agruparPorPadre(categorias) {
     return hijos;
 }
 
-// ---------- Render del menu ----------
+// ---------- Arbol y orden de lectura ----------
 
 /**
- * Genera el HTML del menu: documentos sin seccion primero y luego el arbol de secciones.
- * Las secciones sin documentos (directos o en subsecciones) no se muestran.
+ * Arma el arbol del menu: documentos sin seccion primero y luego las secciones en orden.
+ * Las secciones sin documentos (directos o en subsecciones) se descartan.
+ * @returns {{ sueltos: Array, secciones: Array<{ categoria, hijos, docs }> }}
  */
-export function renderizarArbol(documentos, categorias, hrefBase = '') {
-    const docsPorCategoria = new Map();
-    for (const doc of documentos) {
-        const clave = doc.category_id ?? null;
-        if (!docsPorCategoria.has(clave)) docsPorCategoria.set(clave, []);
-        docsPorCategoria.get(clave).push(doc);
-    }
-    for (const lista of docsPorCategoria.values()) lista.sort((a, b) => porOrden(a, b) || a.title.localeCompare(b.title));
-
+export function construirArbol(documentos, categorias) {
+    const porTitulo = (a, b) => porOrden(a, b) || a.title.localeCompare(b.title);
     const ids = new Set(categorias.map((c) => c.id));
     const hijos = agruparPorPadre(categorias);
+
+    const docsPorCategoria = new Map();
+    const sueltos = [];
+    for (const doc of documentos) {
+        if (doc.category_id == null || !ids.has(doc.category_id)) {
+            sueltos.push(doc);
+            continue;
+        }
+        if (!docsPorCategoria.has(doc.category_id)) docsPorCategoria.set(doc.category_id, []);
+        docsPorCategoria.get(doc.category_id).push(doc);
+    }
+
+    const nodo = (categoria) => {
+        const subsecciones = (hijos.get(categoria.id) ?? []).map(nodo).filter(Boolean);
+        const docs = (docsPorCategoria.get(categoria.id) ?? []).sort(porTitulo);
+        return subsecciones.length || docs.length ? { categoria, hijos: subsecciones, docs } : null;
+    };
+
+    return { sueltos: sueltos.sort(porTitulo), secciones: (hijos.get(null) ?? []).map(nodo).filter(Boolean) };
+}
+
+/** Documentos en el mismo orden en que aparecen en el menu (para anterior / siguiente). */
+export function ordenDeLectura(documentos, categorias) {
+    const { sueltos, secciones } = construirArbol(documentos, categorias);
+    const orden = [...sueltos];
+    const recorrer = ({ hijos, docs }) => {
+        hijos.forEach(recorrer);
+        orden.push(...docs);
+    };
+    secciones.forEach(recorrer);
+    return orden;
+}
+
+// ---------- Render del menu ----------
+
+const CLAVE_PLEGADAS = 'codex.secciones-plegadas';
+
+function leerPlegadas() {
+    try {
+        return new Set(JSON.parse(localStorage.getItem(CLAVE_PLEGADAS)) ?? []);
+    } catch {
+        return new Set();
+    }
+}
+
+/** Guarda en localStorage que secciones dejo plegadas la persona. Llamar una vez por lista. */
+export function recordarSeccionesPlegadas(lista) {
+    lista.addEventListener(
+        'toggle',
+        (evento) => {
+            const seccion = evento.target.dataset?.seccion;
+            if (!seccion || lista.dataset.filtrando) return;
+            const plegadas = leerPlegadas();
+            if (evento.target.open) plegadas.delete(seccion);
+            else plegadas.add(seccion);
+            try {
+                localStorage.setItem(CLAVE_PLEGADAS, JSON.stringify([...plegadas]));
+            } catch {
+                /* almacenamiento no disponible: se ignora */
+            }
+        },
+        true // "toggle" no burbujea
+    );
+}
+
+/**
+ * Genera el HTML del menu.
+ * @param {object} [opciones]
+ * @param {string} [opciones.hrefBase] pagina a la que apuntan los enlaces
+ * @param {boolean} [opciones.todoAbierto] ignora las secciones plegadas (por ejemplo, al buscar)
+ */
+export function renderizarArbol(documentos, categorias, { hrefBase = '', todoAbierto = false } = {}) {
+    const { sueltos, secciones } = construirArbol(documentos, categorias);
+    const plegadas = todoAbierto ? new Set() : leerPlegadas();
 
     const item = (doc) => {
         const borrador = doc.status === 'draft' ? ' <span class="badge_draft">Borrador</span>' : '';
         return `<li><a href="${hrefBase}?doc=${encodeURIComponent(doc.slug)}" data-slug="${escapeHtml(doc.slug)}">${escapeHtml(doc.title)}${borrador}</a></li>`;
     };
 
-    const seccion = (cat) => {
-        const contenido = (hijos.get(cat.id) ?? []).map(seccion).join('') + (docsPorCategoria.get(cat.id) ?? []).map(item).join('');
-        if (!contenido) return '';
-        return `<li class="tree_section">
-            <details open>
-                <summary>${escapeHtml(cat.name)}</summary>
-                <ul class="tree_items">${contenido}</ul>
+    const seccion = ({ categoria, hijos, docs }) => `
+        <li class="tree_section">
+            <details data-seccion="${escapeHtml(categoria.slug)}"${plegadas.has(categoria.slug) ? '' : ' open'}>
+                <summary>${escapeHtml(categoria.name)}</summary>
+                <ul class="tree_items">${hijos.map(seccion).join('')}${docs.map(item).join('')}</ul>
             </details>
         </li>`;
-    };
 
-    // Documentos sin seccion o con una seccion que ya no existe
-    const sueltos = documentos.filter((d) => d.category_id == null || !ids.has(d.category_id));
-    sueltos.sort((a, b) => porOrden(a, b) || a.title.localeCompare(b.title));
-
-    return sueltos.map(item).join('') + (hijos.get(null) ?? []).map(seccion).join('');
+    return sueltos.map(item).join('') + secciones.map(seccion).join('');
 }
 
-export function marcarActivo(lista, slug) {
+export function marcarActivo(lista, slug, { desplazar = false } = {}) {
     lista.querySelectorAll('li.active').forEach((li) => li.classList.remove('active'));
     if (!slug) return;
     const enlace = lista.querySelector(`a[data-slug="${CSS.escape(slug)}"]`);
     if (!enlace) return;
     enlace.parentElement.classList.add('active');
+    enlace.setAttribute('aria-current', 'page');
+    lista.querySelectorAll('a[aria-current]').forEach((a) => a !== enlace && a.removeAttribute('aria-current'));
     // Abre las secciones que contienen al documento activo
     for (let d = enlace.closest('details'); d; d = d.parentElement.closest('details')) d.open = true;
+    if (desplazar) enlace.scrollIntoView?.({ block: 'nearest' });
 }
 
 // ---------- Busqueda ----------

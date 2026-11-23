@@ -9,6 +9,10 @@
         <meta property="og:url" content="https://bernardo-qg.github.io/codex-viewer/" />
         <meta property="og:image" content="https://avatars.githubusercontent.com/u/18334613?s=400&amp;v=4" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="color-scheme" content="dark light" />
+
+        <!-- Tema: se aplica antes de pintar para evitar parpadeo -->
+        <script src="assets/js/tema.js"></script>
 
         <link rel="stylesheet" href="assets/css/styles.css" />
         <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/18334613?s=64&amp;v=4" />
@@ -23,6 +27,18 @@
     <body>
         <nav aria-label="Principal">
             <a href="./" class="nav_brand">CODEX</a>
+            <button class="theme_toggle" id="theme_toggle" type="button" aria-label="Cambiar tema">
+                <svg class="icon_sun" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4" />
+                    <path
+                        d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+                    />
+                </svg>
+                <svg class="icon_moon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+            </button>
+            <div class="progress" id="progress" aria-hidden="true"></div>
         </nav>
 
         <div class="layout">
@@ -40,6 +56,7 @@
                 />
                 <ul class="sidebar_list" id="document_list"></ul>
             </aside>
+            <div class="backdrop" id="backdrop" aria-hidden="true"></div>
 
             <!-- Contenido principal -->
             <main class="main">
@@ -53,12 +70,17 @@
                     <ul class="doc_tags" id="document_tags" aria-label="Etiquetas" hidden></ul>
                     <p class="main_updated" id="document_updated" hidden></p>
                 </div>
-                <p class="loading" id="loading">Cargando...</p>
-                <zero-md id="content" hidden>
-                    <template data-append>
+                <div class="loading" id="loading" role="status" aria-label="Cargando">
+                    <span></span><span></span><span></span><span></span>
+                </div>
+                <zero-md id="content" manual-render hidden>
+                    <!-- Reemplaza los estilos por defecto de zero-md: el tema completo vive en markdown-styles.css -->
+                    <template>
                         <link rel="stylesheet" href="assets/css/markdown-styles.css" />
                     </template>
                 </zero-md>
+
+                <nav class="pager" id="pager" aria-label="Documento anterior y siguiente" hidden></nav>
             </main>
 
             <!-- Indice del documento -->

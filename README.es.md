@@ -19,7 +19,11 @@
 - Etiquetas que cruzan secciones: clic en una para filtrar, o busca `#etiqueta`
 - Búsqueda instantánea por título, resumen, sección y etiquetas (`/` para enfocar, `Enter` para abrir, `Esc` para limpiar)
 - Resumen de una línea bajo el título, usado también como descripción al compartir
+- Tarjetas de anterior / siguiente al final de cada documento, en el orden del menú (también con `←` `→`)
+- Los enlaces entre documentos abren sin recargar, ya sea `?doc=git`, `?doc=git#stash` o el formato anterior `git.md`
 - Índice de cada documento que resalta la sección que estás leyendo
+- Tema claro y oscuro (sigue al sistema hasta que eliges uno), barra de progreso de lectura y resaltado de código en ambos temas
+- El menú recuerda las secciones plegadas, mantiene visible el documento activo y en móvil se abre sobre un fondo oscurecido
 - Botón para copiar los bloques de código
 - Fecha de última actualización en cada documento
 - Navegación sin recargar con URLs para compartir (`?doc=<slug>`), botones de atrás y adelante funcionando y diseño adaptable a móvil
@@ -61,7 +65,9 @@ Cada decisión está documentada como [ADR](docs/adr/README.md): sitio estático
 - **Render seguro contra XSS:** todo valor de la base que se inserta con `innerHTML` se escapa.
 - **Protección contra condiciones de carrera:** un contador de peticiones evita que una respuesta lenta sobrescriba un documento abierto después.
 - **Degradación elegante:** si falta una columna o tabla nueva, se usa una consulta más simple en lugar de fallar.
-- **Integración con Shadow DOM:** el índice y los botones de copiar se construyen sobre el resultado de zero-md con su evento `zero-md-rendered`.
+- **Integración con Shadow DOM:** zero-md renderiza en modo manual con la carpeta del sitio como URL base, así los enlaces e imágenes relativos funcionan; el índice, los botones de copiar y los enlaces internos se montan sobre su resultado.
+- **Un solo orden:** el árbol del menú y el anterior / siguiente salen de la misma función, así que nunca se contradicen.
+- **Tema en un solo lugar:** los colores son variables CSS, que atraviesan el Shadow DOM; un botón cambia la página, el Markdown y el código.
 
 ## Tecnologías
 
@@ -76,7 +82,8 @@ HTML · CSS · JavaScript (módulos ES) · [Supabase](https://supabase.com/) · 
 │   ├── js/
 │   │   ├── config.js     URL de Supabase y llave publicable
 │   │   ├── utils.js      Cliente compartido, consulta, orden, listado y escape de HTML
-│   │   ├── api.js        Lógica del visor: búsqueda, índice y botones de copiar
+│   │   ├── api.js        Lógica del visor: navegación, búsqueda, índice y botones de copiar
+│   │   ├── tema.js       Tema claro / oscuro, aplicado antes de pintar
 │   │   └── admin.js      Lógica del panel
 │   ├── css/              Estilos del sitio, del panel y del Markdown
 │   ├── images/           Imágenes que usan los documentos

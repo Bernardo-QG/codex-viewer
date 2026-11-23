@@ -19,7 +19,11 @@
 - Tags that cut across sections: click one to filter, or search `#tag`
 - Instant search across titles, summaries, sections and tags (`/` to focus, `Enter` to open, `Esc` to clear)
 - One-line summary under each title, also used as the page description when sharing
+- Previous / next cards at the end of each document, following the sidebar order (also `←` `→`)
+- Links between documents open without reloading, whether written as `?doc=git`, `?doc=git#stash` or legacy `git.md`
 - Table of contents for each document, highlighting the section you are reading
+- Light and dark themes (follows the system until you pick one), reading progress bar and syntax highlighting for both themes
+- Sidebar remembers collapsed sections, keeps the active document in view, and slides over a dimmed backdrop on mobile
 - One-click copy button on code blocks
 - "Last updated" date for every document
 - Client-side routing with shareable URLs (`?doc=<slug>`), working back and forward buttons and a mobile-friendly layout
@@ -71,7 +75,9 @@ Each decision is recorded as an [Architecture Decision Record](docs/adr/README.m
 - **XSS-safe rendering:** every database value inserted with `innerHTML` is escaped.
 - **Race-condition guard:** a request counter ensures a slow response can never overwrite a document opened afterwards.
 - **Graceful degradation:** if a newer column or table is missing, the app falls back to a simpler query instead of breaking.
-- **Shadow DOM integration:** the table of contents and copy buttons are built from zero-md's rendered output using its `zero-md-rendered` event.
+- **Shadow DOM integration:** zero-md renders in manual mode with the site folder as base URL, so relative links and images resolve correctly; the table of contents, copy buttons and in-app link handling are built on its rendered output.
+- **Single source of order:** the sidebar tree and previous / next navigation come from the same function, so they can never disagree.
+- **Themeable from one place:** colors are CSS custom properties, which cross the Shadow DOM boundary, so one toggle restyles the page, the Markdown and the code.
 
 ## Tech stack
 
@@ -86,7 +92,8 @@ HTML · CSS · JavaScript (ES modules) · [Supabase](https://supabase.com/) · [
 │   ├── js/
 │   │   ├── config.js     Supabase URL and publishable key
 │   │   ├── utils.js      Shared client, querying, sorting, list rendering, HTML escaping
-│   │   ├── api.js        Reader logic: search, table of contents, copy buttons
+│   │   ├── api.js        Reader logic: navigation, search, table of contents, copy buttons
+│   │   ├── tema.js       Light / dark theme, applied before first paint
 │   │   └── admin.js      Admin panel logic
 │   ├── css/              Site, admin and Markdown styles
 │   ├── images/           Images referenced by documents

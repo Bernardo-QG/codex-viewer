@@ -19,10 +19,21 @@ Todos los cambios relevantes del proyecto. El formato sigue [Keep a Changelog](h
 - Estado borrador/publicado. Los borradores solo se ven en el panel o con `?preview=1`.
 - Resumen por documento: se muestra bajo el título y se usa en la búsqueda y en la meta `description`.
 - Migración `db/migrations/2026-11-21_secciones_etiquetas_estado.sql` y ADR 0008.
+- Anterior / siguiente al final de cada documento y atajos `←` `→`.
+- Los enlaces entre documentos (`?doc=`, `#ancla` o `archivo.md`) abren sin recargar; los externos, en otra pestaña.
+- Tema claro / oscuro con botón en la barra superior, que respeta la preferencia del sistema.
+- Barra de progreso de lectura, esqueleto de carga y aparición suave del contenido.
+- El menú recuerda las secciones plegadas, se desplaza al documento activo y en móvil se cierra con un fondo oscurecido o con `Esc`.
 
 ### Cambiado
 
+- Nueva tipografía de lectura (Roboto + JetBrains Mono), texto alineado a la izquierda y resaltado de código con colores en ambos temas.
+- Se oculta el primer `# título` del Markdown cuando repite el título del documento.
 - El panel guarda por `id` en lugar de `slug` y agrega estado, resumen, sección con sangría y etiquetas con autocompletado.
+
+### Corregido
+
+- Los enlaces e imágenes relativos del Markdown se resolvían contra una URL `data:` y quedaban rotos.
 
 ## [1.0.0] - 2026-11-21
 
