@@ -42,7 +42,7 @@ let documentos = [];
 let categorias = [];
 let slugMostrado = null;
 let peticionActual = 0;
-let observadorToc = null;
+let encabezadosToc = [];
 
 // ---------- Navegacion ----------
 
@@ -250,11 +250,10 @@ function despuesDeRenderizar(tituloDocumento) {
 }
 
 function construirIndice(raiz) {
-    observadorToc?.disconnect();
-
     const encabezados = [...raiz.querySelectorAll('.markdown-body h2, .markdown-body h3')];
     toc.hidden = encabezados.length < 2;
     tocLista.innerHTML = '';
+    encabezadosToc = toc.hidden ? [] : encabezados;
     if (toc.hidden) return;
 
     const usados = new Set();
@@ -278,18 +277,7 @@ function construirIndice(raiz) {
         tocLista.append(li);
     }
 
-    // Resalta la seccion visible
-    observadorToc = new IntersectionObserver(
-        (entradas) => {
-            const visible = entradas.find((e) => e.isIntersecting);
-            if (!visible) return;
-            tocLista.querySelectorAll('a').forEach((a) => {
-                a.classList.toggle('active', a.getAttribute('href') === `#${visible.target.id}`);
-            });
-        },
-        { rootMargin: '-70px 0px -70% 0px' }
-    );
-    encabezados.forEach((h) => observadorToc.observe(h));
+    resaltarSeccionActual();
 }
 
 function agregarBotonesCopiar(raiz) {
@@ -344,6 +332,22 @@ function configurarEnlacesInternos() {
         } else {
             navegarA(destino.slug, { hash: destino.hash });
         }
+    });
+}
+
+/** Marca en el indice la ultima seccion cuyo titulo ya paso bajo la barra superior. */
+function resaltarSeccionActual() {
+    if (!encabezadosToc.length) return;
+    const limite = 120;
+    const alFinal = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+    let actual = encabezadosToc[0];
+    for (const h of encabezadosToc) {
+        if (h.getBoundingClientRect().top <= limite) actual = h;
+        else break;
+    }
+    if (alFinal) actual = encabezadosToc.at(-1);
+    tocLista.querySelectorAll('a').forEach((a) => {
+        a.classList.toggle('active', a.getAttribute('href') === `#${actual.id}`);
     });
 }
 
@@ -434,7 +438,14 @@ function configurarEventos() {
         }
     });
 
-    window.addEventListener('scroll', actualizarProgreso, { passive: true });
+    window.addEventListener(
+        'scroll',
+        () => {
+            actualizarProgreso();
+            resaltarSeccionActual();
+        },
+        { passive: true }
+    );
     window.addEventListener('resize', actualizarProgreso);
     window.addEventListener('popstate', mostrarInicial);
 }
