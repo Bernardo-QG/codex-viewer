@@ -235,10 +235,30 @@
 }
 
 /* Botones */
+/* Barra de acciones fija abajo: Guardar siempre a la vista aunque el contenido sea largo */
 .form_actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
     display: flex;
     align-items: center;
     gap: 1rem;
+    margin: 0 -2rem;
+    padding: 0.85rem 2rem;
+    background-color: color-mix(in srgb, var(--bg-color) 92%, transparent);
+    backdrop-filter: blur(6px);
+    border-top: 1px solid var(--border-color);
+}
+
+.atajo {
+    margin-left: auto;
+    padding: 0.1rem 0.45rem;
+    border: 1px solid var(--border-color);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.72rem;
+    color: var(--text-color-muted);
 }
 
 .btn {
@@ -329,5 +349,15 @@
 
     .admin_main {
         padding: 1rem;
+    }
+
+    .form_actions {
+        margin: 0 -1rem;
+        padding: 0.75rem 1rem;
+    }
+
+    /* En pantallas tactiles no hay teclado fisico: se oculta la pista del atajo */
+    .atajo {
+        display: none;
     }
 }

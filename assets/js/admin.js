@@ -274,6 +274,21 @@ formDocumento.addEventListener('submit', guardarDocumento);
 btnEliminar.addEventListener('click', eliminarDocumento);
 btnNuevo.addEventListener('click', () => limpiarFormulario());
 
+// ---------- Ctrl+S / Cmd+S guarda el formulario visible ----------
+
+// En fase de captura para adelantarse al editor de Markdown y al dialogo "Guardar pagina" del navegador
+document.addEventListener(
+    'keydown',
+    (evento) => {
+        if (evento.key.toLowerCase() !== 's' || !(evento.ctrlKey || evento.metaKey) || evento.altKey) return;
+        evento.preventDefault();
+        const form = document.querySelector('.admin_main [data-panel]:not([hidden]) form');
+        const boton = form?.querySelector('button[type="submit"]');
+        if (form && !boton?.disabled) form.requestSubmit(boton);
+    },
+    true
+);
+
 // ---------- Pestanas: documentos, secciones y etiquetas ----------
 
 const VISTAS = ['documentos', 'secciones', 'etiquetas'];
