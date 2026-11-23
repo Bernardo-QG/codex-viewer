@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Página de un códice maya: azul maya, registros y bloques de glifos en ocre -->
+  <style>
+    .linea{fill:#1F7A80}.pagina{fill:#4FB3B5}.glifo{fill:#D99A2B}
+    @media (prefers-color-scheme: dark){.linea{fill:#3A9EA3}.pagina{fill:#8AD4D2}.glifo{fill:#F2BE55}}
+  </style>
+  <rect class="pagina" x="12" y="6" width="40" height="52" rx="4"/>
+  <rect class="linea" x="16" y="22" width="32" height="2.5" rx="1.25"/>
+  <rect class="linea" x="16" y="40" width="32" height="2.5" rx="1.25"/>
+  <rect class="glifo" x="17" y="11" width="8" height="7" rx="2.2"/>
+  <rect class="glifo" x="28" y="11" width="8" height="7" rx="2.2"/>
+  <rect class="glifo" x="39" y="11" width="6" height="7" rx="2"/>
+  <rect class="glifo" x="17" y="28" width="16" height="8" rx="2.5"/>
+  <rect class="glifo" x="36" y="28" width="9" height="8" rx="2.5"/>
+  <rect class="glifo" x="17" y="46" width="8" height="7" rx="2.2"/>
+  <rect class="glifo" x="28" y="46" width="8" height="7" rx="2.2"/>
+</svg>

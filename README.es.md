@@ -87,6 +87,7 @@ HTML · CSS · JavaScript (módulos ES) · [Supabase](https://supabase.com/) · 
 │   │   ├── tema.js       Tema claro / oscuro, aplicado antes de pintar
 │   │   └── admin.js      Lógica del panel
 │   ├── css/              Estilos del sitio, del panel y del Markdown
+│   ├── icons/            Favicon (SVG con variante oscura) e ícono para iPhone
 │   ├── images/           Imágenes que usan los documentos
 │   └── bruno/            Colección de la API para Bruno
 ├── db/

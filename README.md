@@ -97,6 +97,7 @@ HTML · CSS · JavaScript (ES modules) · [Supabase](https://supabase.com/) · [
 │   │   ├── tema.js       Light / dark theme, applied before first paint
 │   │   └── admin.js      Admin panel logic
 │   ├── css/              Site, admin and Markdown styles
+│   ├── icons/            Favicon (SVG with dark variant) and Apple touch icon
 │   ├── images/           Images referenced by documents
 │   └── bruno/            API collection for Bruno
 ├── db/

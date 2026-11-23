@@ -24,6 +24,7 @@ Todos los cambios relevantes del proyecto. El formato sigue [Keep a Changelog](h
 - Tema claro / oscuro con botón en la barra superior, que respeta la preferencia del sistema.
 - Barra de progreso de lectura, esqueleto de carga y aparición suave del contenido.
 - El menú recuerda las secciones plegadas, se desplaza al documento activo y en móvil se cierra con un fondo oscurecido o con `Esc`.
+- Ícono propio inspirado en los códices mayas (página en azul maya con registros y bloques de glifos en ocre), en SVG con variante para tema oscuro, `apple-touch-icon` y `theme-color`, con el mismo estilo que Stack the Skills y growth-plan. Reemplaza al avatar de GitHub como favicon.
 - Pestañas en el panel para administrar secciones (crear, anidar, ordenar, describir y eliminar) y etiquetas (crear, renombrar, eliminar y quitar las que no se usan), con el número de documentos de cada una.
 
 ### Cambiado
