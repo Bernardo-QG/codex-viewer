@@ -75,8 +75,9 @@ CREATE TRIGGER trg_documents_updated_at
 
 -- =========================================================
 -- Row Level Security
--- Lectura pública. La escritura con anon es TEMPORAL hasta que el panel
--- tenga login (ver docs/adr/0007-seguridad-con-llave-publicable-y-rls.md).
+-- Lectura pública. Escritura solo para usuarios autenticados; mientras el
+-- panel no tenga login se edita desde Supabase
+-- (ver docs/adr/0007-seguridad-con-llave-publicable-y-rls.md).
 -- =========================================================
 -- ---------- documents ----------
 ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
@@ -85,9 +86,9 @@ CREATE POLICY "documents_lectura_publica" ON documents
     FOR SELECT TO anon, authenticated
     USING (true);
 
--- TEMPORAL: reemplazar por auth.uid() = '<uuid-del-autor>' al agregar login
-CREATE POLICY "documents_escritura_temporal" ON documents
-    FOR ALL TO anon, authenticated
+-- Al agregar login: restringir a auth.uid() = '<uuid-del-autor>'
+CREATE POLICY "documents_escritura_autenticados" ON documents
+    FOR ALL TO authenticated
     USING (true) WITH CHECK (true);
 
 -- ---------- categories ----------
@@ -97,9 +98,9 @@ CREATE POLICY "categories_lectura_publica" ON categories
     FOR SELECT TO anon, authenticated
     USING (true);
 
--- TEMPORAL: reemplazar por auth.uid() = '<uuid-del-autor>' al agregar login
-CREATE POLICY "categories_escritura_temporal" ON categories
-    FOR ALL TO anon, authenticated
+-- Al agregar login: restringir a auth.uid() = '<uuid-del-autor>'
+CREATE POLICY "categories_escritura_autenticados" ON categories
+    FOR ALL TO authenticated
     USING (true) WITH CHECK (true);
 
 -- ---------- tags ----------
@@ -109,9 +110,9 @@ CREATE POLICY "tags_lectura_publica" ON tags
     FOR SELECT TO anon, authenticated
     USING (true);
 
--- TEMPORAL: reemplazar por auth.uid() = '<uuid-del-autor>' al agregar login
-CREATE POLICY "tags_escritura_temporal" ON tags
-    FOR ALL TO anon, authenticated
+-- Al agregar login: restringir a auth.uid() = '<uuid-del-autor>'
+CREATE POLICY "tags_escritura_autenticados" ON tags
+    FOR ALL TO authenticated
     USING (true) WITH CHECK (true);
 
 -- ---------- document_tags ----------
@@ -121,8 +122,8 @@ CREATE POLICY "document_tags_lectura_publica" ON document_tags
     FOR SELECT TO anon, authenticated
     USING (true);
 
--- TEMPORAL: reemplazar por auth.uid() = '<uuid-del-autor>' al agregar login
-CREATE POLICY "document_tags_escritura_temporal" ON document_tags
-    FOR ALL TO anon, authenticated
+-- Al agregar login: restringir a auth.uid() = '<uuid-del-autor>'
+CREATE POLICY "document_tags_escritura_autenticados" ON document_tags
+    FOR ALL TO authenticated
     USING (true) WITH CHECK (true);
 

@@ -4,6 +4,10 @@ Todos los cambios relevantes del proyecto. El formato sigue [Keep a Changelog](h
 
 ## [Sin publicar]
 
+### Seguridad
+
+- La llave publicable (anon) ya no puede escribir: insertar, editar y borrar queda solo para usuarios autenticados. Migración `db/migrations/2026-11-24_quita_escritura_anon.sql`. Mientras el panel no tenga login, el contenido se edita desde Supabase.
+
 ### Agregado
 
 - ADRs en `docs/adr/` con las decisiones de arquitectura del proyecto.
