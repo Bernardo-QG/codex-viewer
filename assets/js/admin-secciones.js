@@ -28,6 +28,7 @@ export function iniciarSecciones({ alCambiar }) {
 
     const hijosDe = (id) => categorias.filter((c) => c.parent_id === id);
 
+    /** Ids de todas las subsecciones de una seccion, a cualquier profundidad. */
     function descendientes(id) {
         const ids = new Set();
         const recorrer = (actual) =>
@@ -39,6 +40,7 @@ export function iniciarSecciones({ alCambiar }) {
         return ids;
     }
 
+    /** Trae las secciones y cuenta los documentos de cada una. */
     async function cargar() {
         const [cats, docs] = await Promise.all([
             sb.from('categories').select('id, parent_id, name, slug, description, sort_order'),
@@ -61,6 +63,7 @@ export function iniciarSecciones({ alCambiar }) {
         if (idEditando && !categorias.some((c) => c.id === idEditando)) nueva();
     }
 
+    /** Dibuja el arbol de secciones con su numero de documentos. */
     function pintarLista() {
         const plano = aplanarCategorias(categorias);
         lista.innerHTML = plano.length
@@ -77,6 +80,7 @@ export function iniciarSecciones({ alCambiar }) {
             : '<li class="list_empty">Aún no hay secciones. Crea la primera con el formulario.</li>';
     }
 
+    /** Llena el select de seccion padre sin la seccion en edicion ni sus descendientes, para evitar ciclos. */
     function pintarPadres() {
         const excluidos = idEditando ? new Set([idEditando, ...descendientes(idEditando)]) : new Set();
         const seleccion = padre.value;
@@ -89,6 +93,7 @@ export function iniciarSecciones({ alCambiar }) {
         padre.value = seleccion;
     }
 
+    /** Deja el formulario listo para crear una seccion. */
     function nueva() {
         idEditando = null;
         form.reset();
@@ -103,6 +108,7 @@ export function iniciarSecciones({ alCambiar }) {
         nombre.focus();
     }
 
+    /** Carga en el formulario la seccion indicada. */
     function editar(id) {
         const c = categorias.find((x) => x.id === id);
         if (!c) return;
@@ -124,6 +130,7 @@ export function iniciarSecciones({ alCambiar }) {
         pintarLista();
     }
 
+    /** Crea o actualiza la seccion del formulario. */
     async function guardar(evento) {
         evento.preventDefault();
         const registro = {
@@ -163,6 +170,7 @@ export function iniciarSecciones({ alCambiar }) {
         alCambiar();
     }
 
+    /** Elimina la seccion en edicion si no tiene subsecciones; sus documentos quedan sin seccion. */
     async function eliminar() {
         const c = categorias.find((x) => x.id === idEditando);
         if (!c) return;

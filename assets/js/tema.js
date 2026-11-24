@@ -4,6 +4,7 @@
     var CLAVE = 'codex.tema';
     var consulta = window.matchMedia('(prefers-color-scheme: light)');
 
+    /** Tema elegido por la persona, o null si nunca eligio o no hay almacenamiento. */
     function guardado() {
         try {
             return localStorage.getItem(CLAVE);
@@ -12,6 +13,7 @@
         }
     }
 
+    /** Aplica el tema al documento y actualiza la etiqueta del boton. */
     function aplicar(tema) {
         document.documentElement.dataset.theme = tema;
         var boton = document.getElementById('theme_toggle');

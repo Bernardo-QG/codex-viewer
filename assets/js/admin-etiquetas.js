@@ -26,6 +26,7 @@ export function iniciarEtiquetas({ alCambiar }) {
 
     const sinUso = () => etiquetas.filter((t) => !usos.get(t.id));
 
+    /** Trae las etiquetas y cuenta en cuantos documentos se usa cada una. */
     async function cargar() {
         const [tags, relaciones] = await Promise.all([
             sb.from('tags').select('id, name, slug').order('name'),
@@ -45,6 +46,7 @@ export function iniciarEtiquetas({ alCambiar }) {
         if (idEditando && !etiquetas.some((t) => t.id === idEditando)) nueva();
     }
 
+    /** Dibuja la lista de etiquetas con su numero de documentos. */
     function pintarLista() {
         lista.innerHTML = etiquetas.length
             ? etiquetas
@@ -64,6 +66,7 @@ export function iniciarEtiquetas({ alCambiar }) {
         btnLimpiar.textContent = `Quitar ${plural(libres, 'etiqueta sin uso', 'etiquetas sin uso')}`;
     }
 
+    /** Deja el formulario listo para crear una etiqueta. */
     function nueva() {
         idEditando = null;
         form.reset();
@@ -76,6 +79,7 @@ export function iniciarEtiquetas({ alCambiar }) {
         nombre.focus();
     }
 
+    /** Carga en el formulario la etiqueta indicada. */
     function editar(id) {
         const t = etiquetas.find((x) => x.id === id);
         if (!t) return;
@@ -90,6 +94,7 @@ export function iniciarEtiquetas({ alCambiar }) {
         pintarLista();
     }
 
+    /** Crea o actualiza la etiqueta del formulario. */
     async function guardar(evento) {
         evento.preventDefault();
         const registro = { name: nombre.value.trim().replace(/^#/, ''), slug: slug.value.trim() };
@@ -118,6 +123,7 @@ export function iniciarEtiquetas({ alCambiar }) {
         alCambiar();
     }
 
+    /** Elimina la etiqueta en edicion despues de confirmar. */
     async function eliminar() {
         const t = etiquetas.find((x) => x.id === idEditando);
         if (!t) return;
@@ -138,6 +144,7 @@ export function iniciarEtiquetas({ alCambiar }) {
         alCambiar();
     }
 
+    /** Elimina de una vez todas las etiquetas que ningun documento usa. */
     async function limpiarSinUso() {
         const libres = sinUso();
         if (!libres.length) return;

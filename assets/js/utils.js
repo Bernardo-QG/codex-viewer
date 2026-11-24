@@ -4,6 +4,7 @@ export const SITE_NAME = 'Codex';
 
 export const sb = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
 
+/** Escapa texto para insertarlo en HTML sin riesgo de inyeccion. */
 export function escapeHtml(valor) {
     return String(valor ?? '').replace(
         /[&<>"']/g,
@@ -11,6 +12,7 @@ export function escapeHtml(valor) {
     );
 }
 
+/** Minusculas y sin acentos, para comparar y buscar. */
 export function normalizar(texto) {
     return String(texto ?? '')
         .toLowerCase()
@@ -18,12 +20,14 @@ export function normalizar(texto) {
         .replace(/[̀-ͯ]/g, '');
 }
 
+/** Convierte un texto en slug para URL: "Guia de Git" -> "guia-de-git". */
 export function generarSlug(texto) {
     return normalizar(texto)
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, '');
 }
 
+/** Slug del documento indicado en ?doc= de la URL. */
 export function obtenerSlugDeURL() {
     return new URLSearchParams(window.location.search).get('doc');
 }
@@ -89,6 +93,7 @@ export function aplanarCategorias(categorias) {
     return resultado;
 }
 
+/** Agrupa las secciones por su padre, ordenadas; las que apuntan a un padre inexistente quedan en la raiz. */
 function agruparPorPadre(categorias) {
     const hijos = new Map();
     const ids = new Set(categorias.map((c) => c.id));
@@ -149,6 +154,7 @@ export function ordenDeLectura(documentos, categorias) {
 
 const CLAVE_PLEGADAS = 'codex.secciones-plegadas';
 
+/** Secciones que la persona dejo plegadas, guardadas en localStorage. */
 function leerPlegadas() {
     try {
         return new Set(JSON.parse(localStorage.getItem(CLAVE_PLEGADAS)) ?? []);
@@ -203,6 +209,7 @@ export function renderizarArbol(documentos, categorias, { hrefBase = '', todoAbi
     return sueltos.map(item).join('') + secciones.map(seccion).join('');
 }
 
+/** Resalta en el menu el documento activo y abre las secciones que lo contienen. */
 export function marcarActivo(lista, slug, { desplazar = false } = {}) {
     lista.querySelectorAll('li.active').forEach((li) => li.classList.remove('active'));
     if (!slug) return;

@@ -46,6 +46,7 @@ let encabezadosToc = [];
 
 // ---------- Navegacion ----------
 
+/** Abre un documento sin recargar la pagina y actualiza la URL. */
 function navegarA(slug, { reemplazar = false, hash = '' } = {}) {
     const url = new URL(window.location);
     url.searchParams.set('doc', slug);
@@ -54,6 +55,7 @@ function navegarA(slug, { reemplazar = false, hash = '' } = {}) {
     mostrarDocumentoPorSlug(slug);
 }
 
+/** Desplaza hasta el encabezado del #ancla dentro del documento. */
 function irASeccion(hash, { suave = true } = {}) {
     const id = decodeURIComponent(hash.replace(/^#/, ''));
     const destino = id && content.shadowRoot?.getElementById(id);
@@ -63,6 +65,7 @@ function irASeccion(hash, { suave = true } = {}) {
 
 // ---------- Menu y busqueda ----------
 
+/** Dibuja el menu lateral aplicando el filtro de busqueda. */
 function pintarLista() {
     const termino = busqueda.value.trim();
     const visibles = filtrarDocumentos(documentos, termino);
@@ -73,10 +76,12 @@ function pintarLista() {
     marcarActivo(lista, obtenerSlugDeURL());
 }
 
+/** Slug del primer documento del menu, para abrirlo por defecto. */
 function primerDocumentoVisible() {
     return lista.querySelector('a[data-slug]')?.dataset.slug;
 }
 
+/** Trae documentos y secciones y dibuja el menu. */
 async function cargarContenido() {
     const resultado = await obtenerContenido({ incluirBorradores: modoPreview });
 
@@ -90,6 +95,7 @@ async function cargarContenido() {
     pintarLista();
 }
 
+/** Filtra el menu por la etiqueta indicada y lo abre. */
 function buscarEtiqueta(slug) {
     busqueda.value = `#${slug}`;
     pintarLista();
@@ -97,11 +103,13 @@ function buscarEtiqueta(slug) {
     busqueda.focus();
 }
 
+/** Abre el menu lateral en movil. */
 function abrirSidebar() {
     sidebar.classList.add('open');
     document.body.classList.add('menu_abierto');
 }
 
+/** Cierra el menu lateral en movil. */
 function cerrarSidebar() {
     sidebar.classList.remove('open');
     document.body.classList.remove('menu_abierto');
@@ -109,6 +117,7 @@ function cerrarSidebar() {
 
 // ---------- Documento ----------
 
+/** Trae un documento por slug; si faltan columnas nuevas, consulta solo las basicas. */
 async function consultarDocumento(slug) {
     const completo = await sb
         .from('documents')
@@ -135,6 +144,7 @@ async function renderizarMarkdown(markdown) {
     await content.render({ baseUrl: URL_BASE.href });
 }
 
+/** Dibuja la ruta de secciones del documento y la marca de borrador. */
 function pintarRuta(categoryId, esBorrador) {
     const secciones = rutaDeCategoria(categorias, categoryId);
     const borrador = esBorrador ? '<span class="badge_draft">Borrador</span>' : '';
@@ -143,6 +153,7 @@ function pintarRuta(categoryId, esBorrador) {
     ruta.hidden = !ruta.innerHTML;
 }
 
+/** Dibuja las etiquetas del documento como botones de filtro. */
 function pintarEtiquetas(tags = []) {
     etiquetas.hidden = !tags.length;
     etiquetas.innerHTML = tags
@@ -150,6 +161,7 @@ function pintarEtiquetas(tags = []) {
         .join('');
 }
 
+/** HTML del enlace anterior o siguiente con el nombre de su seccion. */
 function enlacePager(doc, clase, etiqueta) {
     if (!doc) return '<span></span>';
     const seccion = rutaDeCategoria(categorias, doc.category_id).at(-1)?.name;
@@ -160,6 +172,7 @@ function enlacePager(doc, clase, etiqueta) {
     </a>`;
 }
 
+/** Dibuja los enlaces al documento anterior y siguiente segun el orden de lectura. */
 function pintarPager(slug) {
     const orden = ordenDeLectura(documentos, categorias);
     const i = orden.findIndex((d) => d.slug === slug);
@@ -169,6 +182,7 @@ function pintarPager(slug) {
     pager.innerHTML = enlacePager(anterior, 'pager_prev', '← Anterior') + enlacePager(siguiente, 'pager_next', 'Siguiente →');
 }
 
+/** Dibuja titulo, ruta, resumen, etiquetas y fecha del documento. */
 function pintarEncabezado(data) {
     const esBorrador = data.status === 'draft';
     titulo.textContent = data.title;
@@ -187,6 +201,7 @@ function pintarEncabezado(data) {
     document.title = `${data.title} — ${SITE_NAME}`;
 }
 
+/** Consulta y muestra un documento; descarta respuestas de peticiones viejas. */
 async function mostrarDocumentoPorSlug(slug) {
     // Evita que una respuesta lenta sobrescriba un documento abierto despues
     const peticion = ++peticionActual;
@@ -227,6 +242,7 @@ async function mostrarDocumentoPorSlug(slug) {
 
 // ---------- Post-render: dentro del Shadow DOM de zero-md ----------
 
+/** Ajusta el markdown ya pintado: oculta el titulo repetido, abre enlaces externos en otra pestana, arma el indice y los botones de copiar. */
 function despuesDeRenderizar(tituloDocumento) {
     const raiz = content.shadowRoot;
     if (!raiz) return;
@@ -249,6 +265,7 @@ function despuesDeRenderizar(tituloDocumento) {
     agregarBotonesCopiar(raiz);
 }
 
+/** Arma el indice con los h2 y h3 y resalta la seccion visible. */
 function construirIndice(raiz) {
     const encabezados = [...raiz.querySelectorAll('.markdown-body h2, .markdown-body h3')];
     toc.hidden = encabezados.length < 2;
@@ -280,6 +297,7 @@ function construirIndice(raiz) {
     resaltarSeccionActual();
 }
 
+/** Agrega un boton de copiar a cada bloque de codigo. */
 function agregarBotonesCopiar(raiz) {
     raiz.querySelectorAll('.markdown-body pre').forEach((pre) => {
         if (pre.querySelector('.copy_button')) return;
@@ -320,6 +338,7 @@ function destinoInterno(a) {
     return null;
 }
 
+/** Hace que los enlaces entre documentos abran sin recargar la pagina. */
 function configurarEnlacesInternos() {
     content.shadowRoot.addEventListener('click', (evento) => {
         if (evento.defaultPrevented || evento.button !== 0 || evento.metaKey || evento.ctrlKey || evento.shiftKey) return;
@@ -353,6 +372,7 @@ function resaltarSeccionActual() {
 
 // ---------- Barra de progreso de lectura ----------
 
+/** Actualiza la barra de progreso de lectura. */
 function actualizarProgreso() {
     const total = document.documentElement.scrollHeight - window.innerHeight;
     progreso.style.transform = `scaleX(${total > 0 ? Math.min(window.scrollY / total, 1) : 0})`;
@@ -360,6 +380,7 @@ function actualizarProgreso() {
 
 // ---------- Inicio ----------
 
+/** Muestra el documento de la URL, o el primero del menu si no hay ninguno. */
 function mostrarInicial() {
     const slug = obtenerSlugDeURL();
     if (slug && slug === slugMostrado) {
@@ -375,10 +396,12 @@ function mostrarInicial() {
     else loading.textContent = 'Aún no hay documentos.';
 }
 
+/** Indica si el elemento recibe texto, para no disparar atajos de teclado al escribir. */
 function esCampoDeTexto(elemento) {
     return elemento instanceof Element && elemento.matches('input, textarea, select, [contenteditable]');
 }
 
+/** Conecta botones, busqueda, atajos de teclado y navegacion del historial. */
 function configurarEventos() {
     $('menu_button').addEventListener('click', abrirSidebar);
     $('sidebar_toggle').addEventListener('click', cerrarSidebar);

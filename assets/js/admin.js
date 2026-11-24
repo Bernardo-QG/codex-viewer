@@ -45,6 +45,7 @@ const editor = new EasyMDE({
     status: ['lines', 'words']
 });
 
+/** Muestra un mensaje de exito o error bajo el formulario. */
 function mostrarEstado(mensaje, tipo) {
     clearTimeout(temporizadorEstado);
     formStatus.textContent = mensaje;
@@ -54,10 +55,12 @@ function mostrarEstado(mensaje, tipo) {
     }, 3000);
 }
 
+/** Actualiza el contador de caracteres del resumen (maximo 300). */
 function actualizarContador() {
     contadorResumen.textContent = `${inputSummary.value.length}/300`;
 }
 
+/** Marca que documento se esta editando y ajusta los botones del formulario. */
 function modoEdicion(id, slug, status) {
     idEditando = id;
     slugEditando = slug;
@@ -71,6 +74,7 @@ function modoEdicion(id, slug, status) {
     }
 }
 
+/** Vacia el formulario para un documento nuevo. */
 function limpiarFormulario({ actualizarURL = true } = {}) {
     formDocumento.reset();
     inputOrder.value = '0';
@@ -90,6 +94,7 @@ function limpiarFormulario({ actualizarURL = true } = {}) {
 
 // ---------- Carga ----------
 
+/** Trae documentos y secciones (incluye borradores) y llena el menu y los selects. */
 async function cargarListas() {
     const resultado = await obtenerContenido({ incluirBorradores: true });
 
@@ -120,6 +125,7 @@ async function cargarListas() {
     listaEtiquetas.innerHTML = (tags ?? []).map((t) => `<option value="${escapeHtml(t.name)}"></option>`).join('');
 }
 
+/** Carga en el formulario el documento con el slug indicado. */
 async function cargarDocumento(slug) {
     const campos = completo
         ? 'id, title, slug, summary, content, status, category_id, sort_order, tags(name)'
@@ -177,6 +183,7 @@ async function guardarEtiquetas(documentId) {
     return null;
 }
 
+/** Valida y guarda el documento del formulario con sus etiquetas. */
 async function guardarDocumento(evento) {
     evento.preventDefault();
 
@@ -231,6 +238,7 @@ async function guardarDocumento(evento) {
     await cargarListas();
 }
 
+/** Elimina el documento en edicion despues de confirmar. */
 async function eliminarDocumento() {
     if (!idEditando) return;
 
@@ -294,11 +302,13 @@ document.addEventListener(
 const VISTAS = ['documentos', 'secciones', 'etiquetas'];
 const vistas = {};
 
+/** Pestana del panel indicada en ?vista=, o documentos si no es valida. */
 function vistaDeURL() {
     const vista = new URLSearchParams(window.location.search).get('vista');
     return VISTAS.includes(vista) && completo ? vista : 'documentos';
 }
 
+/** Cambia de pestana del panel (documentos, secciones o etiquetas). */
 function mostrarVista(vista, { actualizarURL = true } = {}) {
     document.querySelectorAll('.admin_tabs [role="tab"]').forEach((tab) => {
         tab.setAttribute('aria-selected', String(tab.dataset.vista === vista));
