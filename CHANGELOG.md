@@ -4,10 +4,6 @@ Todos los cambios relevantes del proyecto. El formato sigue [Keep a Changelog](h
 
 ## [Sin publicar]
 
-### Seguridad
-
-- La llave publicable (anon) ya no puede escribir: insertar, editar y borrar queda solo para usuarios autenticados. Migración `db/migrations/2026-11-24_quita_escritura_anon.sql`. Mientras el panel no tenga login, el contenido se edita desde Supabase.
-
 ### Agregado
 
 - ADRs en `docs/adr/` con las decisiones de arquitectura del proyecto.
@@ -37,10 +33,17 @@ Todos los cambios relevantes del proyecto. El formato sigue [Keep a Changelog](h
 - Nueva tipografía de lectura (Roboto + JetBrains Mono), texto alineado a la izquierda y resaltado de código con colores en ambos temas.
 - Se oculta el primer `# título` del Markdown cuando repite el título del documento.
 - El panel guarda por `id` en lugar de `slug` y agrega estado, resumen, sección con sangría y etiquetas con autocompletado.
+- Nuevo ícono: un conjunto de hojas de códice apiladas en lugar de una sola hoja (favicon, variante oscura y `apple-touch-icon`).
+- Vista previa al compartir: `og:image` propia (`assets/images/og-preview.png`, 1200×630) en lugar del avatar de GitHub.
+- Un comentario por función en todo el JS.
 
 ### Corregido
 
 - Los enlaces e imágenes relativos del Markdown se resolvían contra una URL `data:` y quedaban rotos.
+
+### Seguridad
+
+- La llave publicable (anon) ya no puede escribir: insertar, editar y borrar queda solo para usuarios autenticados. Migración `db/migrations/2026-11-24_quita_escritura_anon.sql`. Mientras el panel no tenga login, el contenido se edita desde Supabase.
 
 ## [1.0.0] - 2026-11-21
 
